@@ -180,4 +180,19 @@
         onSnapshot(collection(db, "orders"), (snapshot) => {
             const container = document.getElementById('ordersTrackingContainer');
             container.innerHTML = "";
+                        snapshot.forEach(doc => {
+                const order = doc.data();
+                const badgeClass = order.status === "Pending" ? "status-pending" : "status-accepted";
+                
+                                var card = document.createElement('div');
+                card.className = 'order-card';
+                card.innerHTML = '<div class="order-info">' +
+                    '<h3>' + order.item + '</h3>' +
+                    '<p>Customer: ' + order.customerName + ' | Total: ' + order.price + '</p>' +
+                    '</div>' +
+                    '<div>' +
+                    '<span class="status-badge ' + badgeClass + '">' + order.status + '</span>' +
+                    '</div>';
+
+
         
