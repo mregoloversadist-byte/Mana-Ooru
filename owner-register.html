@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Your Business | Mana-Ooru</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f3f6f3;
+      color: #222;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 20px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 3px 15px #00000012;
+    }
+
+    h1 {
+      text-align: center;
+      color: #176b35;
+      margin-bottom: 8px;
+    }
+
+    p {
+      text-align: center;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 75px;
+    }
+
+    button {
+      margin-top: 22px;
+      background: #176b35;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #888;
+    }
+
+    #message {
+      margin-top: 16px;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+
+    .back {
+      display: block;
+      margin-top: 18px;
+      text-align: center;
+      color: #176b35;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🏪 Mana-Ooru</h1>
+    <p>Register your business and reach more customers in Bhupalpally.</p>
+
+    <form id="registrationForm">
+
+      <label for="businessName">Business Name</label>
+      <input id="businessName" required maxlength="100"
+             placeholder="e.g. Lakshmi Tiffin Center">
+
+      <label for="ownerName">Owner's Full Name</label>
+      <input id="ownerName" required maxlength="100"
+             placeholder="Enter your name">
+
+      <label for="email">Email Address</label>
+      <input id="email" type="email" required
+             placeholder="Enter your email">
+
+      <label for="phone">Mobile Number</label>
+      <input id="phone" type="tel" required
+             maxlength="15" placeholder="Enter your phone number">
+
+      <label for="password">Create Password</label>
+      <input id="password" type="password" required minlength="6"
+             autocomplete="new-password"
+             placeholder="At least 6 characters">
+
+      <label for="category">Business Category</label>
+      <select id="category" required>
+        <option value="">Choose category</option>
+        <option value="Food">Restaurant / Food</option>
+        <option value="Tiffin">Tiffin Center</option>
+        <option value="Chicken">Chicken / Meat Shop</option>
+        <option value="Haircut">Barber / Salon</option>
+        <option value="Beauty Parlour">Beauty Parlour</option>
+        <option value="Grocery">Grocery / General Store</option>
+        <option value="Other">Other Business</option>
+      </select>
+
+      <label for="address">Business Address</label>
+      <textarea id="address" required maxlength="300"
+                placeholder="Enter your shop location"></textarea>
+
+      <label for="description">What does your business offer?</label>
+      <textarea id="description" maxlength="500"
+                placeholder="Describe your products or services"></textarea>
+
+      <button id="submitButton" type="submit">
+        Register My Business
+      </button>
+
+      <div id="message" role="status"></div>
+    </form>
+
+    <a class="back" href="index.html">← Back to Customer Website</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth,
+      createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // We will insert your existing Firebase configuration here.
+    const firebaseConfig = {
+      apiKey: "REPLACE_WITH_YOUR_API_KEY",
+      authDomain: "mana-ooru-b7669.firebaseapp.com",
+      projectId: "mana-ooru-b7669",
+      storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+      appId: "REPLACE_WITH_YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("registrationForm");
+    const message = document.getElementById("message");
+    const button = document.getElementById("submitButton");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      button.disabled = true;
+      message.textContent = "Submitting registration...";
+
+      let accountCreated = false;
+
+      try {
+        const businessName =
+          document.getElementById("businessName").value.trim();
+        const ownerName =
+          document.getElementById("ownerName").value.trim();
+        const email =
+          document.getElementById("email").value.trim();
+        const phone =
+          document.getElementById("phone").value.trim();
+        const password =
+          document.getElementById("password").value;
+        const category =
+          document.getElementById("category").value;
+        const address =
+          document.getElementById("address").value.trim();
+        const description =
+          document.getElementById("description").value.trim();
+
+        if (!businessName || !ownerName || !email ||
+            !phone || !category || !address) {
+          throw new Error("Please complete all required fields.");
+        }
+
+        const credential = await createUserWithEmailAndPassword(
+          auth, email, password
+        );
+
+        accountCreated = true;
+
+        await addDoc(collection(db, "businessApplications"), {
+          ownerId: credential.user.uid,
+          businessName,
+          ownerName,
+          email,
+          phone,
+          category,
+          address,
+          description,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        form.reset();
+
+        message.textContent =
+          "Registration submitted! Your business is awaiting admin approval.";
+
+      } catch (error) {
+        console.error(error);
+
+        if (accountCreated) {
+          message.textContent =
+            "Your account was created, but the application could not be saved. Please contact the administrator before trying again.";
+        } else if (error.code === "auth/email-already-in-use") {
+          message.textContent =
+            "This email already has an account. Please use another email.";
+        } else if (error.code === "auth/weak-password") {
+          message.textContent =
+            "Please choose a stronger password.";
+        } else if (error.code === "auth/invalid-email") {
+          message.textContent =
+            "Please enter a valid email address.";
+        } else {
+          message.textContent =
+            "Registration failed. Please check the details and try again.";
+        }
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
