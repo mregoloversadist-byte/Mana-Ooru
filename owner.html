@@ -241,7 +241,7 @@ loginForm.addEventListener("submit", async (event) => {
       document.getElementById("password").value
     );
 
-    const userDoc = await getDoc(doc(db, "users", credential.user.uid));
+    const userDoc = await getDoc(doc(db, "Users", credential.user.uid));
 
     if (!userDoc.exists() || userDoc.data().role !== "owner") {
       await signOut(auth);
