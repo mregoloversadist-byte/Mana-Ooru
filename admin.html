@@ -220,23 +220,27 @@ async function updateApplication(id, status) {
 }
 
 async function loadDashboard() {
-  await Promise.all([
-    loadCollection(
-      "businessApplications",
-      "applications",
-      "business applications"
-    ),
-    loadCollection(
-      "shops",
-      "businesses",
-      "registered businesses"
-    ),
-    loadCollection(
-      "orders",
-      "orders",
-      "marketplace orders"
-    )
-  ]);
+console.log("Admin dashboard loading...");
+
+await Promise.all([
+loadCollection(
+"businessApplications",
+"applications",
+"business applications"
+),
+loadCollection(
+"shops",
+"businesses",
+"registered businesses"
+),
+loadCollection(
+"orders",
+"orders",
+"marketplace orders"
+)
+]);
+
+console.log("Admin dashboard loading finished.");
 }
 
 loginForm.addEventListener("submit", async event => {
