@@ -251,8 +251,8 @@
           message.textContent =
             "Please enter a valid email address.";
         } else {
-          message.textContent =
-            "Registration failed. Please check the details and try again.";
+  message.textContent =
+    "Registration failed: " + error.code + " - " + error.message;
         }
       } finally {
         button.disabled = false;
