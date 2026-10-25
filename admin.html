@@ -120,7 +120,7 @@ const credential = await signInWithEmailAndPassword(
 signedInUser = credential.user;
 
 const userDoc = await getDoc(
-  doc(db, "users", signedInUser.uid)
+  doc(db, "Users", signedInUser.uid)
 );
 
 const userData = userDoc.exists() ? userDoc.data() : null;
