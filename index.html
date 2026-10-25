@@ -428,7 +428,10 @@ footer {
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -448,7 +451,15 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Customer signed in anonymously");
+  })
+  .catch((error) => {
+    console.error("Anonymous sign-in failed:", error);
+  });
 let selectedItem = "";
 let selectedPrice = 0;
 let selectedCategory = "";
