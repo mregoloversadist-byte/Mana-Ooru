@@ -63,16 +63,84 @@ a{color:#176b35}
   </div>  <div class="card">
     <a href="index.html">← Back to Customer Website</a>
   </div>
-</div><script>
-  // Layout only: Firebase authentication and administrator
-  // permission checks must be implemented before this panel is used.
-  const form = document.getElementById("loginForm");
-  const message = document.getElementById("message");
+</div>
+  <script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  form.addEventListener("submit", function(event) {
-    event.preventDefault();
-    message.textContent =
-      "Administrator login is not connected yet. Firebase security setup is required.";
-  });
-</script></body>
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KTOIKKBd_UEK0",
+  authDomain: "mana-ooru-b7669.firebaseapp.com",
+  projectId: "mana-ooru-b7669",
+  storageBucket: "mana-ooru-b7669.firebasestorage.app",
+  messagingSenderId: "863965053518",
+  appId: "1:863965053518:web:5a73ed54f8513fef95f91f",
+  measurementId: "G-334M90X4WG"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginForm = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const adminPanel = document.getElementById("adminPanel");
+const loginButton = document.getElementById("loginButton");
+const logoutButton = document.getElementById("logoutButton");
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  loginButton.disabled = true;
+  message.textContent = "Checking administrator account...";
+
+  try {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    const credential = await signInWithEmailAndPassword(
+      auth, email, password
+    );
+
+    const userDoc = await getDoc(
+      doc(db, "users", credential.user.uid)
+    );
+
+    if (!userDoc.exists() || userDoc.data().role !== "admin") {
+      await signOut(auth);
+      throw new Error("Access denied. This account is not an administrator.");
+    }
+
+    loginForm.hidden = true;
+    adminPanel.hidden = false;
+    logoutButton.hidden = false;
+    message.textContent = "Administrator login successful!";
+
+  } catch (error) {
+    message.textContent = error.message || "Login failed.";
+  } finally {
+    loginButton.disabled = false;
+  }
+});
+
+logoutButton.addEventListener("click", async () => {
+  await signOut(auth);
+  adminPanel.hidden = true;
+  loginForm.hidden = false;
+  logoutButton.hidden = true;
+  message.textContent = "You have logged out.";
+});
+  </script>
+</body>
 </html>
