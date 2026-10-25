@@ -117,10 +117,14 @@ loginForm.addEventListener("submit", async (event) => {
       doc(db, "users", credential.user.uid)
     );
 
-    if (!userDoc.exists() || userDoc.data().role !== "admin") {
-      await signOut(auth);
-      throw new Error("Access denied. This account is not an administrator.");
-    }
+    console.log("Signed-in UID:", credential.user.uid);
+console.log("Firestore document exists:", userDoc.exists());
+console.log("Firestore user data:", userDoc.exists() ? userDoc.data() : "Document not found");
+
+if (!userDoc.exists() || userDoc.data().role !== "admin") {
+await signOut(auth);
+throw new Error("Admin check failed. Open the browser console to inspect the UID and user data.");
+}
 
     loginForm.hidden = true;
     adminPanel.hidden = false;
