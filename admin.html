@@ -194,27 +194,59 @@ async function loadCollection(name, elementId, type) {
     );
   }
 }
-
 async function updateApplication(id, status) {
   if (!confirm("Are you sure you want to " + status + " this application?")) {
     return;
   }
 
   try {
-    await updateDoc(
-      doc(db, "businessApplications", id),
-      { status: status }
-    );
+    const applicationRef = doc(db, "businessApplications", id);
+    const applicationSnap = await getDoc(applicationRef);
 
-    alert("Application status updated.");
-    await loadCollection(
-      "businessApplications",
-      "applications",
-      "business applications"
-    );
+    if (!applicationSnap.exists()) {
+      throw new Error("Business application not found.");
+    }
+
+    const application = applicationSnap.data();
+    const finalStatus = status.toLowerCase();
+
+    if (finalStatus === "approved") {
+      if (!application.ownerId) {
+        throw new Error("Owner ID is missing from this application.");
+      }
+
+      const ownerId = application.ownerId;
+      const shopId = id;
+
+      await setDoc(doc(db, "shops", shopId), {
+        ownerId: ownerId,
+        businessName: application.businessName || "",
+        ownerName: application.ownerName || "",
+        email: application.email || "",
+        phone: application.phone || "",
+        category: application.category || "",
+        address: application.address || "",
+        description: application.description || "",
+        status: "approved"
+      });
+
+      await setDoc(doc(db, "Users", ownerId), {
+        role: "owner",
+        shopId: shopId,
+        email: application.email || "",
+        businessName: application.businessName || ""
+      }, { merge: true });
+    }
+
+    await updateDoc(applicationRef, {
+      status: finalStatus
+    });
+
+    alert("Application status updated successfully!");
+    await loadDashboard();
 
   } catch (error) {
-    console.error("Application update failed", error);
+    console.error("Application update failed:", error);
     alert("Could not update application: " + error.message);
   }
 }
