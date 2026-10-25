@@ -131,7 +131,7 @@ label{
   font-size:14px;
 }
 
-input, textarea, select{
+input,textarea,select{
   width:100%;
   padding:12px;
   border:1px solid #ccc;
@@ -189,6 +189,7 @@ textarea{
   font-size:20px;
   font-weight:bold;
   margin:10px 0;
+  overflow-wrap:anywhere;
 }
 
 .status-box{
@@ -197,11 +198,23 @@ textarea{
   border-radius:10px;
   margin-top:10px;
   box-shadow:0 2px 5px rgba(0,0,0,.06);
+  overflow-wrap:anywhere;
 }
 
 .small{
   font-size:13px;
   color:#6b7280;
+  margin-top:6px;
+}
+
+.instructions-box{
+  background:#eff6ff;
+  padding:12px;
+  border-radius:8px;
+  margin-top:10px;
+  font-size:14px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
 </style>
 </head>
@@ -227,7 +240,8 @@ textarea{
 
 <div id="itemsContainer">
 
-  <div class="item-card" data-search="biryani chicken food lunch dinner">
+  <div class="item-card"
+       data-search="biryani chicken food lunch dinner">
     <div class="item-top">
       <div>
         <h3>🍗 Hyderabadi Chicken Biryani</h3>
@@ -235,13 +249,15 @@ textarea{
       </div>
       <div class="price">₹130</div>
     </div>
+
     <button class="order-btn"
       onclick="openOrder('Hyderabadi Chicken Biryani',130,'Food')">
       Order
     </button>
   </div>
 
-  <div class="item-card" data-search="idli dosa tiffin breakfast food">
+  <div class="item-card"
+       data-search="idli dosa tiffin breakfast food">
     <div class="item-top">
       <div>
         <h3>🍚 Idli & Dosa Tiffin Plate</h3>
@@ -249,13 +265,15 @@ textarea{
       </div>
       <div class="price">₹40</div>
     </div>
+
     <button class="order-btn"
       onclick="openOrder('Idli & Dosa Tiffin Plate',40,'Tiffin')">
       Order
     </button>
   </div>
 
-  <div class="item-card" data-search="haircut salon men grooming">
+  <div class="item-card"
+       data-search="haircut salon men grooming">
     <div class="item-top">
       <div>
         <h3>✂️ Standard Men's Haircut</h3>
@@ -263,13 +281,15 @@ textarea{
       </div>
       <div class="price">₹100</div>
     </div>
+
     <button class="order-btn"
       onclick="openOrder('Standard Mens Haircut',100,'Haircut')">
       Book
     </button>
   </div>
 
-  <div class="item-card" data-search="chicken meat skinless kg">
+  <div class="item-card"
+       data-search="chicken meat skinless kg">
     <div class="item-top">
       <div>
         <h3>🍗 Fresh Skinless Chicken</h3>
@@ -277,6 +297,7 @@ textarea{
       </div>
       <div class="price">₹240/kg</div>
     </div>
+
     <button class="order-btn"
       onclick="openOrder('Fresh Skinless Chicken',240,'Chicken')">
       Order
@@ -289,83 +310,117 @@ textarea{
 
 <div class="booking-box" id="orderBox">
 
-<h2 class="section-title">Complete Your Order</h2>
+  <h2 class="section-title">Complete Your Order</h2>
 
-<div class="form-group">
-<label>Selected Item</label>
-<input id="selectedItem" readonly>
-</div>
+  <div class="form-group">
+    <label>Selected Item</label>
+    <input id="selectedItem" readonly>
+  </div>
 
-<div class="form-group">
-<label>Quantity</label>
-<input
-  id="quantity"
-  type="number"
-  min="1"
-  value="1"
-  oninput="calculateTotal()"
->
-</div>
+  <div class="form-group">
+    <label>Quantity</label>
+    <input
+      id="quantity"
+      type="number"
+      min="1"
+      step="1"
+      value="1"
+      oninput="calculateTotal()"
+    >
+  </div>
 
-<div class="form-group">
-<label>Your Name</label>
-<input id="customerName" type="text" placeholder="Enter your name">
-</div>
+  <div class="form-group">
+    <label>Your Name</label>
+    <input
+      id="customerName"
+      type="text"
+      maxlength="100"
+      placeholder="Enter your name"
+    >
+  </div>
 
-<div class="form-group">
-<label>Mobile Number</label>
-<input id="customerPhone" type="tel" placeholder="Enter mobile number">
-</div>
+  <div class="form-group">
+    <label>Mobile Number</label>
+    <input
+      id="customerPhone"
+      type="tel"
+      maxlength="15"
+      placeholder="Enter mobile number"
+    >
+  </div>
 
-<div class="form-group">
-<label>Delivery / Service Location</label>
-<textarea
-  id="customerLocation"
-  rows="3"
-  placeholder="Enter your location or address"
-></textarea>
+  <!-- NEW: SPECIAL INSTRUCTIONS -->
 
-<button class="location-btn" onclick="getLocation()">
-📍 Use My Current Location
-</button>
-</div>
+  <div class="form-group">
+    <label for="specialInstructions">
+      💬 Special Taste & Preparation Instructions (Optional)
+    </label>
 
-<div class="total">
-Total: ₹<span id="totalAmount">0</span>
-</div>
+    <textarea
+      id="specialInstructions"
+      rows="4"
+      maxlength="500"
+      placeholder="Example: Extra spicy biryani, less oil, extra masala, well cooked..."
+    ></textarea>
 
-<button class="confirm" onclick="placeOrder()">
-✅ Confirm Order
-</button>
+    <p class="small">
+      Tell the restaurant how you want your food prepared,
+      or describe any special requirements for your service.
+    </p>
+  </div>
 
-<button class="cancel" onclick="closeOrder()">
-Cancel
-</button>
+  <div class="form-group">
+    <label>Delivery / Service Location</label>
+
+    <textarea
+      id="customerLocation"
+      rows="3"
+      placeholder="Enter your location or address"
+    ></textarea>
+
+    <button class="location-btn" onclick="getLocation()">
+      📍 Use My Current Location
+    </button>
+  </div>
+
+  <div class="total">
+    Total: ₹<span id="totalAmount">0</span>
+  </div>
+
+  <button class="confirm" id="confirmButton"
+          onclick="placeOrder()">
+    ✅ Confirm Order
+  </button>
+
+  <button class="cancel" onclick="closeOrder()">
+    Cancel
+  </button>
 
 </div>
 
 <!-- SUCCESS -->
 
 <div class="success" id="successBox">
-<h2>✅ Order Placed!</h2>
 
-<p>Your order has been submitted successfully.</p>
+  <h2>✅ Order Placed!</h2>
 
-<div class="order-id" id="orderId"></div>
+  <p>Your order has been submitted successfully.</p>
 
-<p id="successDetails"></p>
+  <div class="order-id" id="orderId"></div>
 
-<button
-  class="order-btn"
-  onclick="window.scrollTo({top:0,behavior:'smooth'})">
-Continue Browsing
-</button>
+  <p id="successDetails"></p>
+
+  <button class="order-btn"
+    onclick="continueBrowsing()">
+    Continue Browsing
+  </button>
+
 </div>
 
 <h2 class="section-title">📦 My Recent Orders</h2>
 
 <div id="myOrders">
-<p class="small">Your recent orders will appear here.</p>
+  <p class="small">Your recent orders will appear here.</p>
 </div>
 
 </div>
@@ -428,12 +483,19 @@ window.openOrder = function(item, price, category){
 
   document.getElementById("quantity").value = 1;
 
+  document.getElementById("specialInstructions").value = "";
+
+  document.getElementById("confirmButton").disabled = false;
+  document.getElementById("confirmButton").textContent =
+    "✅ Confirm Order";
+
   calculateTotal();
 
   document.getElementById("orderBox").style.display = "block";
 
   document.getElementById("orderBox")
     .scrollIntoView({behavior:"smooth"});
+
 };
 
 
@@ -449,17 +511,32 @@ window.closeOrder = function(){
 
 
 /* =====================================================
+   CONTINUE BROWSING
+   ===================================================== */
+
+window.continueBrowsing = function(){
+
+  document.getElementById("successBox").style.display = "none";
+
+  document.getElementById("searchInput")
+    .scrollIntoView({behavior:"smooth"});
+
+};
+
+
+/* =====================================================
    CALCULATE TOTAL
    ===================================================== */
 
 window.calculateTotal = function(){
 
-  let quantity =
-    Number(document.getElementById("quantity").value) || 1;
+  const quantity =
+    Number(document.getElementById("quantity").value) || 0;
 
-  let total = selectedPrice * quantity;
+  const total = selectedPrice * quantity;
 
-  document.getElementById("totalAmount").textContent = total;
+  document.getElementById("totalAmount").textContent =
+    total.toLocaleString("en-IN");
 
 };
 
@@ -470,16 +547,14 @@ window.calculateTotal = function(){
 
 window.filterItems = function(){
 
-  let search =
+  const search =
     document.getElementById("searchInput")
-    .value
-    .toLowerCase();
+      .value.toLowerCase();
 
   document.querySelectorAll(".item-card")
     .forEach(card => {
 
-      let text =
-        card.dataset.search.toLowerCase();
+      const text = card.dataset.search.toLowerCase();
 
       card.style.display =
         text.includes(search) ? "block" : "none";
@@ -506,8 +581,8 @@ window.getLocation = function(){
 
     function(position){
 
-      let lat = position.coords.latitude;
-      let lng = position.coords.longitude;
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
 
       document.getElementById("customerLocation").value =
         "GPS Location: " + lat + ", " + lng;
@@ -520,6 +595,12 @@ window.getLocation = function(){
         "Unable to get your location. Please enter your address manually."
       );
 
+    },
+
+    {
+      enableHighAccuracy:true,
+      timeout:10000,
+      maximumAge:60000
     }
 
   );
@@ -542,8 +623,18 @@ window.placeOrder = async function(){
   const location =
     document.getElementById("customerLocation").value.trim();
 
+  const specialInstructions =
+    document.getElementById("specialInstructions").value.trim();
+
   const quantity =
     Number(document.getElementById("quantity").value);
+
+  if(!selectedItem || selectedPrice <= 0){
+
+    alert("Please select an item first.");
+    return;
+
+  }
 
   if(!name || !phone || !location){
 
@@ -552,9 +643,23 @@ window.placeOrder = async function(){
 
   }
 
-  if(!quantity || quantity < 1){
+  if(!/^[0-9+\-\s()]{7,15}$/.test(phone)){
 
-    alert("Please enter a valid quantity.");
+    alert("Please enter a valid mobile number.");
+    return;
+
+  }
+
+  if(!Number.isSafeInteger(quantity) || quantity < 1){
+
+    alert("Please enter a valid whole-number quantity.");
+    return;
+
+  }
+
+  if(specialInstructions.length > 500){
+
+    alert("Special instructions cannot exceed 500 characters.");
     return;
 
   }
@@ -562,8 +667,7 @@ window.placeOrder = async function(){
   const total = selectedPrice * quantity;
 
   const orderNumber =
-    "MO-" +
-    Date.now().toString().slice(-8);
+    "MO-" + Date.now().toString().slice(-8);
 
   const orderData = {
 
@@ -585,11 +689,19 @@ window.placeOrder = async function(){
 
     customerLocation: location,
 
+    specialInstructions: specialInstructions,
+
     status: "pending",
 
     createdAt: Date.now()
 
   };
+
+  const confirmButton =
+    document.getElementById("confirmButton");
+
+  confirmButton.disabled = true;
+  confirmButton.textContent = "Submitting Order...";
 
   try{
 
@@ -603,11 +715,9 @@ window.placeOrder = async function(){
       phone
     );
 
-    document.getElementById("orderBox")
-      .style.display = "none";
+    document.getElementById("orderBox").style.display = "none";
 
-    document.getElementById("successBox")
-      .style.display = "block";
+    document.getElementById("successBox").style.display = "block";
 
     document.getElementById("orderId").textContent =
       "Order ID: " + orderNumber;
@@ -624,11 +734,17 @@ window.placeOrder = async function(){
 
   }catch(error){
 
-    console.error(error);
+    console.error("Order submission failed:", error);
 
     alert(
-      "Order could not be submitted. Firebase database permissions may need to be configured."
+      "Order could not be submitted. Please try again. " +
+      "If the problem continues, check Firebase database permissions."
     );
+
+  }finally{
+
+    confirmButton.disabled = false;
+    confirmButton.textContent = "✅ Confirm Order";
 
   }
 
@@ -639,67 +755,10 @@ window.placeOrder = async function(){
    RECENT ORDERS
    ===================================================== */
 
-const ordersQuery = query(
-  collection(db,"orders"),
-  orderBy("createdAt","desc"),
-  limit(10)
-);
+/*
+  NOTE:
+  This preserves the original live orders query.
+  For a public website, this query should eventually be
+  replaced with customer-authenticated order retrieval.
 
-onSnapshot(
 
-  ordersQuery,
-
-  snapshot => {
-
-    const container =
-      document.getElementById("myOrders");
-
-    if(snapshot.empty){
-
-      container.innerHTML =
-        '<p class="small">No orders yet.</p>';
-
-      return;
-
-    }
-
-    container.innerHTML = "";
-
-    snapshot.forEach(doc => {
-
-      const order = doc.data();
-
-      const card =
-        document.createElement("div");
-
-      card.className = "status-box";
-
-      card.innerHTML = `
-        <strong>${order.item}</strong>
-        <p>Quantity: ${order.quantity}</p>
-        <p>Total: ₹${order.total}</p>
-        <p>Status: <strong>${order.status}</strong></p>
-        <p class="small">Order ID: ${order.orderId}</p>
-      `;
-
-      container.appendChild(card);
-
-    });
-
-  },
-
-  error => {
-
-    console.error(
-      "Could not load orders:",
-      error
-    );
-
-  }
-
-);
-
-</script>
-
-</body>
-</html>
