@@ -101,47 +101,62 @@ const loginButton = document.getElementById("loginButton");
 const logoutButton = document.getElementById("logoutButton");
 
 loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  loginButton.disabled = true;
-  message.textContent = "Checking administrator account...";
+event.preventDefault();
+loginButton.disabled = true;
+message.textContent = "Checking administrator account...";
 
-  try {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+let signedInUser = null;
 
-    const credential = await signInWithEmailAndPassword(
-      auth, email, password
-    );
+try {
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
 
-    const userDoc = await getDoc(
-      doc(db, "users", credential.user.uid)
-    );
-    const userData = userDoc.exists() ? userDoc.data() : null;
+const credential = await signInWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
 
-message.textContent =
-  "UID: " + credential.user.uid +
-  " | Document exists: " + userDoc.exists() +
-  " | Role: " + (userData ? String(userData.role) : "missing");
+signedInUser = credential.user;
 
-    console.log("Signed-in UID:", credential.user.uid);
+const userDoc = await getDoc(
+  doc(db, "users", signedInUser.uid)
+);
+
+const userData = userDoc.exists() ? userDoc.data() : null;
+
+console.log("Signed-in UID:", signedInUser.uid);
 console.log("Firestore document exists:", userDoc.exists());
-console.log("Firestore user data:", userDoc.exists() ? userDoc.data() : "Document not found");
+console.log("Firestore user data:", userData);
 
-if (!userDoc.exists() || userDoc.data().role !== "admin") {
-await signOut(auth);
-throw new Error("Admin check failed. Open the browser console to inspect the UID and user data.");
+if (!userDoc.exists()) {
+  await signOut(auth);
+  message.textContent =
+    "Admin check failed: No users document found for UID " +
+    signedInUser.uid;
+  return;
 }
 
-    loginForm.hidden = true;
-    adminPanel.hidden = false;
-    logoutButton.hidden = false;
-    message.textContent = "Administrator login successful!";
+if (userData.role !== "admin") {
+  await signOut(auth);
+  message.textContent =
+    "Admin check failed: UID " + signedInUser.uid +
+    " has role: " + String(userData.role);
+  return;
+}
 
-  } catch (error) {
-    message.textContent = error.message || "Login failed.";
-  } finally {
-    loginButton.disabled = false;
-  }
+loginForm.hidden = true;
+adminPanel.hidden = false;
+logoutButton.hidden = false;
+message.textContent = "Administrator login successful!";
+
+} catch (error) {
+console.error("Admin login error:", error);
+message.textContent =
+"Login error: " + (error.message || "Unknown error");
+} finally {
+loginButton.disabled = false;
+}
 });
 
 logoutButton.addEventListener("click", async () => {
