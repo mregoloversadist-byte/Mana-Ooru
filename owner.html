@@ -182,25 +182,189 @@ a {
   </div>  <div class="card">
     <p><a href="index.html">← Back to Customer Website</a></p>
     <p><a href="owner-register.html">Register a Business</a></p>
-  </div></div><script>
-  // Dashboard layout only.
-  // Firebase login, product storage, editing, deletion, and order
-  // management must be connected before this page is used.
-  const loginForm = document.getElementById("loginForm");
-  const message = document.getElementById("message");
+  </div></div>
+ <script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  loginForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    message.textContent =
-      "Login is not connected yet. Please wait while we set up Firebase securely.";
-  });
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  document.getElementById("productForm").addEventListener(
-    "submit", function(event) {
-      event.preventDefault();
-      message.textContent =
-        "Product saving is not connected yet. We'll connect it to Firebase next.";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KTOIKKBd_UEK0",
+  authDomain: "mana-ooru-b7669.firebaseapp.com",
+  projectId: "mana-ooru-b7669",
+  storageBucket: "mana-ooru-b7669.firebasestorage.app",
+  messagingSenderId: "863965053518",
+  appId: "1:863965053518:web:5a73ed54f8513fef95f91f",
+  measurementId: "G-334M90X4WG"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginForm = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const dashboard = document.getElementById("dashboard");
+const logoutButton = document.getElementById("logoutButton");
+const loginButton = document.getElementById("loginButton");
+const productForm = document.getElementById("productForm");
+const productsList = document.getElementById("productsList");
+
+let currentShopId = null;
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  loginButton.disabled = true;
+  message.textContent = "Checking your account...";
+
+  try {
+    const credential = await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("email").value.trim(),
+      document.getElementById("password").value
+    );
+
+    const userDoc = await getDoc(doc(db, "users", credential.user.uid));
+
+    if (!userDoc.exists() || userDoc.data().role !== "owner") {
+      await signOut(auth);
+      throw new Error(
+        "Your business account is not approved yet. Please contact the administrator."
+      );
     }
+
+    currentShopId = userDoc.data().shopId;
+
+    if (!currentShopId) {
+      await signOut(auth);
+      throw new Error("Your account has no approved business ID yet.");
+    }
+
+    const shopDoc = await getDoc(doc(db, "shops", currentShopId));
+
+    if (!shopDoc.exists() ||
+        shopDoc.data().ownerId !== credential.user.uid) {
+      await signOut(auth);
+      throw new Error("Business ownership could not be verified.");
+    }
+
+    loginForm.hidden = true;
+    logoutButton.hidden = false;
+    dashboard.hidden = false;
+    message.textContent = "Welcome! You are signed in.";
+    await loadProducts();
+
+  } catch (error) {
+    message.textContent = error.message || "Login failed.";
+  } finally {
+    loginButton.disabled = false;
+  }
+});
+
+logoutButton.addEventListener("click", async () => {
+  await signOut(auth);
+  currentShopId = null;
+  dashboard.hidden = true;
+  loginForm.hidden = false;
+  logoutButton.hidden = true;
+  productsList.replaceChildren();
+  message.textContent = "You have logged out.";
+});
+
+async function loadProducts() {
+  productsList.replaceChildren();
+
+  const productsQuery = query(
+    collection(db, "products"),
+    where("shopId", "==", currentShopId)
   );
-</script></body>
+
+  const snapshot = await getDocs(productsQuery);
+
+  if (snapshot.empty) {
+    productsList.textContent = "You have not added any products yet.";
+    return;
+  }
+
+  snapshot.forEach((productDoc) => {
+    const product = productDoc.data();
+    const item = document.createElement("div");
+    item.className = "product";
+
+    const title = document.createElement("h3");
+    title.textContent = product.name || "Unnamed product";
+
+    const details = document.createElement("p");
+    details.textContent =
+      "Price: ₹" + product.price + " / " + (product.unit || "item");
+
+    item.append(title, details);
+    productsList.appendChild(item);
+  });
+}
+
+productForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!auth.currentUser || !currentShopId) {
+    message.textContent = "Please log in with an approved owner account.";
+    return;
+  }
+
+  const button = document.getElementById("addProductButton");
+  button.disabled = true;
+
+  try {
+    const name = document.getElementById("productName").value.trim();
+    const category = document.getElementById("productCategory").value;
+    const price = Number(document.getElementById("productPrice").value);
+    const unit = document.getElementById("productUnit").value;
+    const description =
+      document.getElementById("productDescription").value.trim();
+
+    if (!name || !category || !Number.isFinite(price) || price <= 0) {
+      throw new Error("Enter a valid product name, category, and price.");
+    }
+
+    await addDoc(collection(db, "products"), {
+      name,
+      category,
+      price,
+      unit,
+      description,
+      shopId: currentShopId,
+      available: true,
+      createdAt: serverTimestamp()
+    });
+
+    productForm.reset();
+    message.textContent = "Product saved successfully!";
+    await loadProducts();
+
+  } catch (error) {
+    message.textContent =
+      "Could not save product: " + (error.message || "Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+});
+ </script>
+</body>
 </html>
