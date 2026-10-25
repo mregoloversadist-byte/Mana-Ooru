@@ -77,7 +77,10 @@ import {
 import {
   getFirestore,
   doc,
-  getDoc
+  getDoc,
+  collection,
+  getDocs,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -100,67 +103,190 @@ const adminPanel = document.getElementById("adminPanel");
 const loginButton = document.getElementById("loginButton");
 const logoutButton = document.getElementById("logoutButton");
 
-loginForm.addEventListener("submit", async (event) => {
-event.preventDefault();
-loginButton.disabled = true;
-message.textContent = "Checking administrator account...";
-
-let signedInUser = null;
-
-try {
-const email = document.getElementById("email").value.trim();
-const password = document.getElementById("password").value;
-
-const credential = await signInWithEmailAndPassword(
-  auth,
-  email,
-  password
-);
-
-signedInUser = credential.user;
-
-const userDoc = await getDoc(
-  doc(db, "Users", signedInUser.uid)
-);
-
-const userData = userDoc.exists() ? userDoc.data() : null;
-
-console.log("Signed-in UID:", signedInUser.uid);
-console.log("Firestore document exists:", userDoc.exists());
-console.log("Firestore user data:", userData);
-
-if (!userDoc.exists()) {
-  await signOut(auth);
-  message.textContent =
-    "Admin check failed: No users document found for UID " +
-    signedInUser.uid;
-  return;
+function showMessage(container, text) {
+  container.replaceChildren();
+  const p = document.createElement("p");
+  p.textContent = text;
+  container.appendChild(p);
 }
 
-if (userData.role !== "admin") {
-  await signOut(auth);
-  message.textContent =
-    "Admin check failed: UID " + signedInUser.uid +
-    " has role: " + String(userData.role);
-  return;
+function displayRecords(container, records, type) {
+  container.replaceChildren();
+
+  if (records.length === 0) {
+    showMessage(container, "No " + type + " found.");
+    return;
+  }
+
+  records.forEach(({ id, data }) => {
+    const card = document.createElement("div");
+    card.className = "item";
+
+    const heading = document.createElement("h3");
+    heading.textContent =
+      data.businessName ||
+      data.shopName ||
+      data.customerName ||
+      data.item ||
+      type;
+
+    card.appendChild(heading);
+
+    for (const [key, value] of Object.entries(data)) {
+      const line = document.createElement("p");
+
+      line.textContent = key + ": " +
+        (value !== null && typeof value === "object"
+          ? JSON.stringify(value)
+          : String(value));
+
+      card.appendChild(line);
+    }
+
+    const idLine = document.createElement("p");
+    idLine.textContent = "Document ID: " + id;
+    card.appendChild(idLine);
+
+    if (type === "business applications") {
+      const approve = document.createElement("button");
+      approve.textContent = "Approve";
+
+      const reject = document.createElement("button");
+      reject.textContent = "Reject";
+      reject.className = "secondary";
+
+      approve.addEventListener("click", () =>
+        updateApplication(id, "approved")
+      );
+
+      reject.addEventListener("click", () =>
+        updateApplication(id, "rejected")
+      );
+
+      card.append(approve, reject);
+    }
+
+    container.appendChild(card);
+  });
 }
 
-loginForm.hidden = true;
-adminPanel.hidden = false;
-logoutButton.hidden = false;
-message.textContent = "Administrator login successful!";
+async function loadCollection(name, elementId, type) {
+  const container = document.getElementById(elementId);
 
-} catch (error) {
-console.error("Admin login error:", error);
-message.textContent =
-"Login error: " + (error.message || "Unknown error");
-} finally {
-loginButton.disabled = false;
+  try {
+    showMessage(container, "Loading " + type + "...");
+
+    const snapshot = await getDocs(collection(db, name));
+
+    const records = snapshot.docs.map(item => ({
+      id: item.id,
+      data: item.data()
+    }));
+
+    displayRecords(container, records, type);
+
+  } catch (error) {
+    console.error("Error loading " + name, error);
+
+    showMessage(
+      container,
+      "Unable to load " + type + ": " + error.message
+    );
+  }
 }
+
+async function updateApplication(id, status) {
+  if (!confirm("Are you sure you want to " + status + " this application?")) {
+    return;
+  }
+
+  try {
+    await updateDoc(
+      doc(db, "businessApplications", id),
+      { status: status }
+    );
+
+    alert("Application status updated.");
+    await loadCollection(
+      "businessApplications",
+      "applications",
+      "business applications"
+    );
+
+  } catch (error) {
+    console.error("Application update failed", error);
+    alert("Could not update application: " + error.message);
+  }
+}
+
+async function loadDashboard() {
+  await Promise.all([
+    loadCollection(
+      "businessApplications",
+      "applications",
+      "business applications"
+    ),
+    loadCollection(
+      "shops",
+      "businesses",
+      "registered businesses"
+    ),
+    loadCollection(
+      "orders",
+      "orders",
+      "marketplace orders"
+    )
+  ]);
+}
+
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  loginButton.disabled = true;
+  message.textContent = "Checking administrator account...";
+
+  try {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    const credential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const signedInUser = credential.user;
+
+    const userDoc = await getDoc(
+      doc(db, "Users", signedInUser.uid)
+    );
+
+    if (!userDoc.exists() ||
+        userDoc.data().role !== "admin") {
+      await signOut(auth);
+      message.textContent = "Administrator verification failed.";
+      return;
+    }
+
+    loginForm.hidden = true;
+    adminPanel.hidden = false;
+    logoutButton.hidden = false;
+    message.textContent = "Administrator login successful!";
+
+    await loadDashboard();
+
+  } catch (error) {
+    console.error("Admin login error:", error);
+    message.textContent = "Login error: " + error.message;
+
+  } finally {
+    loginButton.disabled = false;
+  }
 });
 
 logoutButton.addEventListener("click", async () => {
   await signOut(auth);
+
   adminPanel.hidden = true;
   loginForm.hidden = false;
   logoutButton.hidden = true;
