@@ -116,6 +116,12 @@ loginForm.addEventListener("submit", async (event) => {
     const userDoc = await getDoc(
       doc(db, "users", credential.user.uid)
     );
+    const userData = userDoc.exists() ? userDoc.data() : null;
+
+message.textContent =
+  "UID: " + credential.user.uid +
+  " | Document exists: " + userDoc.exists() +
+  " | Role: " + (userData ? String(userData.role) : "missing");
 
     console.log("Signed-in UID:", credential.user.uid);
 console.log("Firestore document exists:", userDoc.exists());
