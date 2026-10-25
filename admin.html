@@ -215,7 +215,7 @@ async function updateApplication(id, status) {
         throw new Error("Owner ID is missing from this application.");
       }
 
-      const ownerId = application.ownerId;
+      const ownerId = application.Ownerid || application.ownerId;
       const shopId = id;
 
       await setDoc(doc(db, "shops", shopId), {
