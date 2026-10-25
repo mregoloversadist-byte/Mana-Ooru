@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mana-Ooru | Business Dashboard</title><style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f6f3;
+  color: #222;
+}
+
+header {
+  background: #176b35;
+  color: white;
+  padding: 22px 16px;
+  text-align: center;
+}
+
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px #00000010;
+}
+
+h2 {
+  color: #176b35;
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-top: 14px;
+  font-weight: bold;
+}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 7px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+button {
+  background: #176b35;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: #555;
+}
+
+.product {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.product h3 {
+  margin: 0 0 8px;
+}
+
+.note {
+  color: #666;
+  line-height: 1.5;
+}
+
+#message {
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: #176b35;
+}
+</style></head><body><header>
+  <h1>🏪 Mana-Ooru</h1>
+  <p>Business Owner Dashboard</p>
+</header><div class="container">  <div class="card">
+    <h2>🔐 Owner Login</h2>
+    <p class="note">Log in using the email and password you registered with.</p><form id="loginForm">
+  <label for="email">Email Address</label>
+  <input id="email" type="email" autocomplete="username" required>
+
+  <label for="password">Password</label>
+  <input id="password" type="password"
+         autocomplete="current-password" required>
+
+  <button id="loginButton" type="submit">Login</button>
+</form>
+
+<button id="logoutButton" class="secondary" type="button"
+        hidden>Logout</button>
+
+<p id="message" role="status"></p>
+
+  </div>  <div id="dashboard" hidden><div class="card">
+  <h2>📦 Add a Product or Service</h2>
+
+  <form id="productForm">
+    <label for="productName">Product or Service Name</label>
+    <input id="productName" maxlength="100" required
+           placeholder="e.g. Fresh Skinless Chicken">
+
+    <label for="productCategory">Category</label>
+    <select id="productCategory" required>
+      <option value="">Select category</option>
+      <option>Food</option>
+      <option>Tiffin</option>
+      <option>Chicken</option>
+      <option>Haircut</option>
+      <option>Beauty Parlour</option>
+      <option>Grocery</option>
+      <option>Other</option>
+    </select>
+
+    <label for="productPrice">Price in ₹</label>
+    <input id="productPrice" type="number"
+           min="0.01" max="1000000" step="0.01" required>
+
+    <label for="productUnit">Unit</label>
+    <select id="productUnit" required>
+      <option value="item">Per item</option>
+      <option value="kg">Per kg</option>
+      <option value="plate">Per plate</option>
+      <option value="service">Per service</option>
+    </select>
+
+    <label for="productDescription">Description (optional)</label>
+    <textarea id="productDescription" maxlength="500"
+              placeholder="Describe your product"></textarea>
+
+    <button id="addProductButton" type="submit">
+      Add Product
+    </button>
+  </form>
+
+  <p class="note">
+    Product changes will be connected to the customer website
+    after the database integration is completed.
+  </p>
+</div>
+
+<div class="card">
+  <h2>🛍️ My Products</h2>
+  <div id="productsList">
+    <p class="note">Your products will appear here after Firebase is connected.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📋 My Orders</h2>
+  <p class="note">
+    Your customer orders will appear here after we connect the
+    dashboard to your approved business account and order database.
+  </p>
+</div>
+
+  </div>  <div class="card">
+    <p><a href="index.html">← Back to Customer Website</a></p>
+    <p><a href="owner-register.html">Register a Business</a></p>
+  </div></div><script>
+  // Dashboard layout only.
+  // Firebase login, product storage, editing, deletion, and order
+  // management must be connected before this page is used.
+  const loginForm = document.getElementById("loginForm");
+  const message = document.getElementById("message");
+
+  loginForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    message.textContent =
+      "Login is not connected yet. Please wait while we set up Firebase securely.";
+  });
+
+  document.getElementById("productForm").addEventListener(
+    "submit", function(event) {
+      event.preventDefault();
+      message.textContent =
+        "Product saving is not connected yet. We'll connect it to Firebase next.";
+    }
+  );
+</script></body>
+</html>
