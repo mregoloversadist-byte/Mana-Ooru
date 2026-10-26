@@ -241,29 +241,23 @@ loginForm.addEventListener("submit", async (event) => {
       document.getElementById("password").value
     );
 
-    const userDoc = await getDoc(doc(db, "Users", credential.user.uid));
+    const applicationsQuery = query(
+  collection(db, "businessApplications"),
+  where("Ownerid", "==", credential.user.uid),
+  where("status", "==", "approved")
+);
 
-    if (!userDoc.exists() || userDoc.data().role !== "owner") {
-      await signOut(auth);
-      throw new Error(
-        "Your business account is not approved yet. Please contact the administrator."
-      );
-    }
+const applicationsSnapshot = await getDocs(applicationsQuery);
 
-    currentShopId = userDoc.data().shopId;
+if (applicationsSnapshot.empty) {
+  await signOut(auth);
+  throw new Error(
+    "No approved business application was found for this account."
+  );
+}
 
-    if (!currentShopId) {
-      await signOut(auth);
-      throw new Error("Your account has no approved business ID yet.");
-    }
-
-    const shopDoc = await getDoc(doc(db, "shops", currentShopId));
-
-    if (!shopDoc.exists() ||
-        shopDoc.data().ownerId !== credential.user.uid) {
-      await signOut(auth);
-      throw new Error("Business ownership could not be verified.");
-    }
+const businessDoc = applicationsSnapshot.docs[0];
+currentShopId = businessDoc.id;
 
     loginForm.hidden = true;
     logoutButton.hidden = false;
