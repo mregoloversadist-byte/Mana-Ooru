@@ -950,10 +950,10 @@ window.placeOrder = async function() {
 
   try {
 
-    await addDoc(
-      collection(db, "orders"),
-      orderData
-    );
+    const orderRef = await addDoc(
+  collection(db, "orders"),
+  orderData
+);
 
     saveRecentOrder({
 
