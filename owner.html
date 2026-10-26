@@ -341,15 +341,16 @@ productForm.addEventListener("submit", async (event) => {
     }
 
     await addDoc(collection(db, "products"), {
-      name,
-      category,
-      price,
-      unit,
-      description,
-      shopId: currentShopId,
-      available: true,
-      createdAt: serverTimestamp()
-    });
+  name,
+  category,
+  price,
+  unit,
+  description,
+  shopId: currentShopId,
+  ownerId: auth.currentUser.uid,
+  available: true,
+  createdAt: serverTimestamp()
+});
 
     productForm.reset();
     message.textContent = "Product saved successfully!";
