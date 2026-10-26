@@ -267,6 +267,7 @@ currentShopId = businessDoc.id;
     dashboard.hidden = false;
     message.textContent = "Welcome! You are signed in.";
     await loadProducts();
+await loadOrders();
 
   } catch (error) {
     message.textContent = error.message || "Login failed.";
