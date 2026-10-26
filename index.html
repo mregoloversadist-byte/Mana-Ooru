@@ -777,6 +777,96 @@ function saveRecentOrder(order) {
 }
 
 function renderRecentOrders() {
+  const container = getElement("myOrders");
+  const orders = getSavedOrders();
+
+  // Stop old listeners before rebuilding the order list.
+  if (window.orderStatusListeners) {
+    window.orderStatusListeners.forEach(unsubscribe => unsubscribe());
+    window.orderStatusListeners.clear();
+  } else {
+    window.orderStatusListeners = new Map();
+  }
+
+  if (!orders.length) {
+    container.innerHTML =
+      '<p class="empty">No recent orders on this device yet.</p>';
+    return;
+  }
+
+  container.replaceChildren();
+
+  orders.forEach(order => {
+    const card = document.createElement("div");
+    card.className = "status-box";
+
+    const title = document.createElement("strong");
+    title.textContent = order.item || "Order";
+
+    const id = document.createElement("p");
+    id.className = "small";
+    id.textContent = "Order ID: " + order.orderId;
+
+    const details = document.createElement("p");
+    details.textContent =
+      "Quantity: " + order.quantity +
+      " | Total: ₹" +
+      Number(order.total).toLocaleString("en-IN");
+
+    const status = document.createElement("span");
+    status.className = "status";
+
+    function showStatus(value) {
+      if (value === "accepted") {
+        status.textContent = "✅ Order Accepted";
+      } else if (value === "rejected") {
+        status.textContent = "❌ Order Rejected";
+      } else {
+        status.textContent = "🟡 Pending — awaiting business response";
+      }
+    }
+
+    showStatus(order.status || "pending");
+
+    card.append(title, id, details, status);
+    container.appendChild(card);
+
+    if (order.firestoreDocId) {
+      const unsubscribe = onSnapshot(
+        doc(db, "orders", order.firestoreDocId),
+        snapshot => {
+          if (!snapshot.exists()) {
+            status.textContent = "Order status unavailable";
+            return;
+          }
+
+          const latestStatus = snapshot.data().status || "pending";
+          showStatus(latestStatus);
+
+          const savedOrders = getSavedOrders();
+          const updatedOrders = savedOrders.map(saved =>
+            saved.firestoreDocId === order.firestoreDocId
+              ? { ...saved, status: latestStatus }
+              : saved
+          );
+
+          localStorage.setItem(
+            "manaOoruRecentOrders",
+            JSON.stringify(updatedOrders)
+          );
+        },
+        error => {
+          console.error("Order status update failed:", error);
+        }
+      );
+
+      window.orderStatusListeners.set(
+        order.firestoreDocId,
+        unsubscribe
+      );
+    }
+  });
+}
 
   const container = getElement("myOrders");
   const orders = getSavedOrders();
