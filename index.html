@@ -868,56 +868,7 @@ function renderRecentOrders() {
   });
 }
 
-  const container = getElement("myOrders");
-  const orders = getSavedOrders();
-
-  if (!orders.length) {
-
-    container.innerHTML =
-      '<p class="empty">No recent orders on this device yet.</p>';
-
-    return;
-  }
-
-  container.replaceChildren();
-
-  orders.forEach(order => {
-
-    const card = document.createElement("div");
-    card.className = "status-box";
-
-    const title = document.createElement("strong");
-    title.textContent = order.item;
-
-    const id = document.createElement("p");
-    id.className = "small";
-    id.textContent =
-      "Order ID: " + order.orderId;
-
-    const details = document.createElement("p");
-
-    details.textContent =
-      "Quantity: " + order.quantity +
-      " | Total: ₹" +
-      Number(order.total).toLocaleString("en-IN");
-
-    const status = document.createElement("span");
-
-    status.className = "status";
-    status.textContent =
-      "Submitted — awaiting business response";
-
-    card.append(
-      title,
-      id,
-      details,
-      status
-    );
-
-    container.appendChild(card);
-
-  });
-}
+  
 
 window.placeOrder = async function() {
 
