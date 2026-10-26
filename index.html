@@ -956,7 +956,8 @@ window.placeOrder = async function() {
 );
 
     saveRecentOrder({
-
+      
+firestoreDocId: orderRef.id,
       orderId: orderNumber,
 
       item: selectedItem,
