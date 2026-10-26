@@ -429,7 +429,7 @@ signInAnonymously(auth)
   .catch((error) => {
     console.error("Anonymous sign-in failed:", error);
     showMarketplaceError(
-      "Customer sign-in failed. Please check Firebase Authentication."
+    "Sign-in failed: " + error.code + " — " + error.message
     );
   });
 
