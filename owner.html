@@ -316,7 +316,61 @@ async function loadProducts() {
     productsList.appendChild(item);
   });
 }
+async function loadOrders() {
+  const ordersList = document.getElementById("ordersList");
+  ordersList.replaceChildren();
 
+  if (!auth.currentUser || !currentShopId) {
+    ordersList.textContent = "Please log in to view orders.";
+    return;
+  }
+
+  try {
+    const ordersQuery = query(
+      collection(db, "orders"),
+      where("ownerId", "==", auth.currentUser.uid)
+    );
+
+    const snapshot = await getDocs(ordersQuery);
+
+    if (snapshot.empty) {
+      ordersList.textContent = "No orders received yet.";
+      return;
+    }
+
+    snapshot.forEach((orderDoc) => {
+      const order = orderDoc.data();
+
+      const card = document.createElement("div");
+      card.className = "product";
+
+      const title = document.createElement("h3");
+      title.textContent = order.item || "Customer order";
+
+      const details = document.createElement("p");
+      details.textContent =
+        "Order ID: " + (order.orderId || orderDoc.id) +
+        " | Quantity: " + (order.quantity || 1) +
+        " | Total: ₹" + (order.total || 0);
+
+      const customer = document.createElement("p");
+      customer.textContent =
+        "Customer: " + (order.customerName || "Not provided") +
+        " | Phone: " + (order.customerPhone || "Not provided");
+
+      const status = document.createElement("p");
+      status.textContent = "Status: " + (order.status || "pending");
+
+      card.append(title, details, customer, status);
+      ordersList.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Order loading failed:", error);
+    ordersList.textContent =
+      "Could not load orders. Check Firestore permissions.";
+  }
+}
 productForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
