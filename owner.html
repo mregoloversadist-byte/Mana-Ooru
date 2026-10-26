@@ -360,10 +360,57 @@ async function loadOrders() {
         "Customer: " + (order.customerName || "Not provided") +
         " | Phone: " + (order.customerPhone || "Not provided");
 
-      const status = document.createElement("p");
+            const status = document.createElement("p");
       status.textContent = "Status: " + (order.status || "pending");
 
       card.append(title, details, customer, status);
+
+      if (!order.status || order.status === "pending") {
+        const acceptButton = document.createElement("button");
+        acceptButton.textContent = "✅ Accept Order";
+
+        acceptButton.addEventListener("click", async () => {
+          acceptButton.disabled = true;
+          rejectButton.disabled = true;
+
+          try {
+            await updateDoc(doc(db, "orders", orderDoc.id), {
+              status: "accepted"
+            });
+
+            await loadOrders();
+          } catch (error) {
+            console.error("Accept order failed:", error);
+            alert("Could not accept order: " + error.message);
+            acceptButton.disabled = false;
+            rejectButton.disabled = false;
+          }
+        });
+
+        const rejectButton = document.createElement("button");
+        rejectButton.textContent = "❌ Reject Order";
+
+        rejectButton.addEventListener("click", async () => {
+          acceptButton.disabled = true;
+          rejectButton.disabled = true;
+
+          try {
+            await updateDoc(doc(db, "orders", orderDoc.id), {
+              status: "rejected"
+            });
+
+            await loadOrders();
+          } catch (error) {
+            console.error("Reject order failed:", error);
+            alert("Could not reject order: " + error.message);
+            acceptButton.disabled = false;
+            rejectButton.disabled = false;
+          }
+        });
+
+        card.append(acceptButton, rejectButton);
+      }
+
       ordersList.appendChild(card);
     });
 
