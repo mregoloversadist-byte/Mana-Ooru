@@ -228,6 +228,19 @@ textarea {
   color: #6b7280;
 }
 
+.business-name {
+  font-weight: bold;
+  color: #176b35;
+}
+
+.loading {
+  background: white;
+  padding: 18px;
+  border-radius: 10px;
+  text-align: center;
+  color: #666;
+}
+
 footer {
   text-align: center;
   padding: 20px 10px;
@@ -244,184 +257,123 @@ footer {
   <p>Your local marketplace</p>
   <p>Discover and order from local businesses</p>
 </header>
-  <div style="text-align:center; padding:15px;">
-  <a href="owner-register.html" style="display:inline-block; background:#176b35; color:white; padding:12px 18px; margin:5px; border-radius:8px; text-decoration:none; font-weight:bold;">🏪 Register Your Business</a>
 
-  <a href="owner.html" style="display:inline-block; background:#2457a7; color:white; padding:12px 18px; margin:5px; border-radius:8px; text-decoration:none; font-weight:bold;">🔐 Owner Login</a>
-  </div>
+<div style="text-align:center; padding:15px;">
+  <a href="owner-register.html"
+     style="display:inline-block;background:#176b35;color:white;padding:12px 18px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;">
+    🏪 Register Your Business
+  </a>
+
+  <a href="owner.html"
+     style="display:inline-block;background:#2457a7;color:white;padding:12px 18px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;">
+    🔐 Owner Login
+  </a>
+</div>
 
 <main class="container">
 
-  <input
-    id="searchInput"
-    class="search"
-    type="search"
-    placeholder="🔍 Search Biryani, Haircut, Idly..."
-    oninput="filterItems()"
-  >
+<input
+  id="searchInput"
+  class="search"
+  type="search"
+  placeholder="🔍 Search Biryani, Haircut, Idly..."
+  oninput="filterItems()"
+>
 
-  <h2 class="section-title">Available Services & Products</h2>
+<h2 class="section-title">Available Services & Products</h2>
 
-  <div id="itemsContainer">
+<div id="itemsContainer">
+  <div class="loading">Loading local businesses...</div>
+</div>
 
-    <div class="item-card"
-         data-search="biryani chicken food lunch dinner">
-      <div class="item-top">
-        <div>
-          <h3>🍗 Hyderabadi Chicken Biryani</h3>
-          <p>Food • Village Spice</p>
-        </div>
-        <div class="price">₹130</div>
-      </div>
-      <button class="order-btn"
-        onclick="openOrder('Hyderabadi Chicken Biryani',130,'Food','Village Spice')">
-        Order
-      </button>
-    </div>
+<section class="booking-box" id="orderBox">
 
-    <div class="item-card"
-         data-search="idli dosa tiffin breakfast food">
-      <div class="item-top">
-        <div>
-          <h3>🍚 Idli & Dosa Tiffin Plate</h3>
-          <p>Tiffin • Lakshmi Center</p>
-        </div>
-        <div class="price">₹40</div>
-      </div>
-      <button class="order-btn"
-        onclick="openOrder('Idli & Dosa Tiffin Plate',40,'Tiffin','Lakshmi Center')">
-        Order
-      </button>
-    </div>
+  <h2 class="section-title">Complete Your Order</h2>
 
-    <div class="item-card"
-         data-search="haircut salon men grooming">
-      <div class="item-top">
-        <div>
-          <h3>✂️ Standard Men's Haircut</h3>
-          <p>Haircut • Star Salon</p>
-        </div>
-        <div class="price">₹100</div>
-      </div>
-      <button class="order-btn"
-        onclick="openOrder('Standard Mens Haircut',100,'Haircut','Star Salon')">
-        Book
-      </button>
-    </div>
-
-    <div class="item-card"
-         data-search="chicken meat skinless kg">
-      <div class="item-top">
-        <div>
-          <h3>🍗 Fresh Skinless Chicken</h3>
-          <p>Chicken • Srikanth Meat</p>
-        </div>
-        <div class="price">₹240/kg</div>
-      </div>
-      <button class="order-btn"
-        onclick="openOrder('Fresh Skinless Chicken',240,'Chicken','Srikanth Meat')">
-        Order
-      </button>
-    </div>
-
+  <div class="form-group">
+    <label>Business</label>
+    <input id="selectedBusiness" readonly>
   </div>
 
-  <section class="booking-box" id="orderBox">
-
-    <h2 class="section-title">Complete Your Order</h2>
-
-    <div class="form-group">
-      <label for="selectedItem">Selected Item</label>
-      <input id="selectedItem" readonly>
-    </div>
-
-    <div class="form-group">
-      <label for="quantity">Quantity</label>
-      <input
-        id="quantity"
-        type="number"
-        min="1"
-        step="1"
-        value="1"
-        oninput="calculateTotal()"
-      >
-      <p class="small">For chicken, quantity means kilograms.</p>
-    </div>
-
-    <div class="form-group">
-      <label for="customerName">Your Name</label>
-      <input
-        id="customerName"
-        type="text"
-        maxlength="100"
-        autocomplete="name"
-        placeholder="Enter your name"
-      >
-    </div>
-
-    <div class="form-group">
-      <label for="customerPhone">Mobile Number</label>
-      <input
-        id="customerPhone"
-        type="tel"
-        maxlength="15"
-        autocomplete="tel"
-        placeholder="Enter mobile number"
-      >
-    </div>
-
-    <div class="form-group">
-      <label for="customerLocation">Delivery / Service Location</label>
-      <textarea
-        id="customerLocation"
-        rows="3"
-        placeholder="Enter your address or location"
-      ></textarea>
-
-      <button class="location-btn" onclick="getLocation()">
-        📍 Use My Current Location
-      </button>
-
-      <p class="small">
-        Allow location access when your browser asks.
-        You can also type your address manually.
-      </p>
-    </div>
-
-    <div class="total">
-      Total: ₹<span id="totalAmount">0</span>
-    </div>
-
-    <button class="confirm" id="confirmButton"
-            onclick="placeOrder()">
-      ✅ Confirm Order
-    </button>
-
-    <button class="cancel" onclick="closeOrder()">
-      Cancel
-    </button>
-
-  </section>
-
-  <section class="success" id="successBox">
-
-    <h2>✅ Order Submitted!</h2>
-    <p>Your order was saved successfully.</p>
-
-    <div class="order-id" id="orderId"></div>
-    <p id="successDetails"></p>
-
-    <button class="order-btn" onclick="continueBrowsing()">
-      Continue Browsing
-    </button>
-
-  </section>
-
-  <h2 class="section-title">📦 My Recent Orders</h2>
-
-  <div id="myOrders">
-    <p class="empty">Your recent orders will appear here.</p>
+  <div class="form-group">
+    <label for="selectedItem">Selected Item</label>
+    <input id="selectedItem" readonly>
   </div>
+
+  <div class="form-group">
+    <label for="quantity">Quantity</label>
+    <input
+      id="quantity"
+      type="number"
+      min="1"
+      step="1"
+      value="1"
+      oninput="calculateTotal()"
+    >
+    <p class="small">For products sold by kg, quantity means kilograms.</p>
+  </div>
+
+  <div class="form-group">
+    <label for="customerName">Your Name</label>
+    <input id="customerName" type="text" maxlength="100"
+           autocomplete="name" placeholder="Enter your name">
+  </div>
+
+  <div class="form-group">
+    <label for="customerPhone">Mobile Number</label>
+    <input id="customerPhone" type="tel" maxlength="15"
+           autocomplete="tel" placeholder="Enter mobile number">
+  </div>
+
+  <div class="form-group">
+    <label for="customerLocation">Delivery / Service Location</label>
+
+    <textarea id="customerLocation" rows="3"
+              placeholder="Enter your address or location"></textarea>
+
+    <button class="location-btn" onclick="getLocation()">
+      📍 Use My Current Location
+    </button>
+
+    <p class="small">
+      Allow location access when your browser asks.
+    </p>
+  </div>
+
+  <div class="total">
+    Total: ₹<span id="totalAmount">0</span>
+  </div>
+
+  <button class="confirm" id="confirmButton"
+          onclick="placeOrder()">
+    ✅ Confirm Order
+  </button>
+
+  <button class="cancel" onclick="closeOrder()">
+    Cancel
+  </button>
+
+</section>
+
+<section class="success" id="successBox">
+
+  <h2>✅ Order Submitted!</h2>
+  <p>Your order was saved successfully.</p>
+
+  <div class="order-id" id="orderId"></div>
+  <p id="successDetails"></p>
+
+  <button class="order-btn" onclick="continueBrowsing()">
+    Continue Browsing
+  </button>
+
+</section>
+
+<h2 class="section-title">📦 My Recent Orders</h2>
+
+<div id="myOrders">
+  <p class="empty">Your recent orders will appear here.</p>
+</div>
 
 </main>
 
@@ -433,16 +385,20 @@ footer {
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getAuth,
   signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
   getFirestore,
   collection,
-  addDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  addDoc,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KTOIKKBd_UEK0",
@@ -458,40 +414,242 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-signInAnonymously(auth)
-  .then(() => {
-    console.log("Customer signed in anonymously");
-  })
-  .catch((error) => {
-    console.error("Anonymous sign-in failed:", error);
-  });
 let selectedItem = "";
 let selectedPrice = 0;
 let selectedCategory = "";
 let selectedBusiness = "";
+let selectedOwnerId = "";
+let allProducts = [];
+
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Customer signed in anonymously");
+    loadMarketplace();
+  })
+  .catch((error) => {
+    console.error("Anonymous sign-in failed:", error);
+    showMarketplaceError(
+      "Customer sign-in failed. Please check Firebase Authentication."
+    );
+  });
 
 function getElement(id) {
   return document.getElementById(id);
 }
 
-window.openOrder = function(item, price, category, business) {
+function showMarketplaceError(text) {
+  getElement("itemsContainer").innerHTML =
+    '<div class="empty">' + text + '</div>';
+}
+
+/*
+ * Load only approved businesses.
+ *
+ * Each approved business supplies:
+ * businessName
+ * ownerId
+ */
+async function loadMarketplace() {
+
+  try {
+
+    const businessQuery = query(
+      collection(db, "businessApplications"),
+      where("status", "==", "approved")
+    );
+
+    const businessSnapshot = await getDocs(businessQuery);
+
+    if (businessSnapshot.empty) {
+      showMarketplaceError(
+        "No approved local businesses are available yet."
+      );
+      return;
+    }
+
+    const approvedBusinesses = {};
+
+    businessSnapshot.forEach((businessDoc) => {
+
+      const business = businessDoc.data();
+
+      if (business.ownerId && business.businessName) {
+
+        approvedBusinesses[business.ownerId] = {
+          businessName: business.businessName,
+          ownerId: business.ownerId,
+          category: business.category || "Other"
+        };
+
+      }
+
+    });
+
+    /*
+     * Products will be connected to ownerId.
+     * The owner dashboard will add this field next.
+     */
+    const productSnapshot = await getDocs(
+      collection(db, "products")
+    );
+
+    allProducts = [];
+
+    productSnapshot.forEach((productDoc) => {
+
+      const product = productDoc.data();
+
+      if (
+        product.ownerId &&
+        approvedBusinesses[product.ownerId]
+      ) {
+
+        allProducts.push({
+          id: productDoc.id,
+          name: product.name || "Unnamed product",
+          category: product.category || "Other",
+          price: Number(product.price) || 0,
+          unit: product.unit || "item",
+          description: product.description || "",
+          ownerId: product.ownerId,
+          businessName:
+            approvedBusinesses[product.ownerId].businessName
+        });
+
+      }
+
+    });
+
+    renderProducts();
+
+  } catch (error) {
+
+    console.error("Marketplace loading failed:", error);
+
+    showMarketplaceError(
+      "Could not load businesses and products. Please check Firestore permissions."
+    );
+  }
+}
+
+function renderProducts() {
+
+  const container = getElement("itemsContainer");
+  container.replaceChildren();
+
+  if (!allProducts.length) {
+
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent =
+      "No products are available yet. Approved business owners can add products from their dashboard.";
+
+    container.appendChild(empty);
+    return;
+  }
+
+  allProducts.forEach(product => {
+
+    const card = document.createElement("div");
+    card.className = "item-card";
+
+    card.dataset.search =
+      (
+        product.name + " " +
+        product.category + " " +
+        product.businessName + " " +
+        product.description
+      ).toLowerCase();
+
+    const top = document.createElement("div");
+    top.className = "item-top";
+
+    const left = document.createElement("div");
+
+    const title = document.createElement("h3");
+    title.textContent = product.name;
+
+    const business = document.createElement("p");
+    business.innerHTML =
+      product.category +
+      " • <span class='business-name'>" +
+      escapeHtml(product.businessName) +
+      "</span>";
+
+    left.append(title, business);
+
+    const price = document.createElement("div");
+    price.className = "price";
+    price.textContent =
+      "₹" + product.price.toLocaleString("en-IN");
+
+    if (product.unit === "kg") {
+      price.textContent += "/kg";
+    }
+
+    top.append(left, price);
+
+    const orderButton = document.createElement("button");
+    orderButton.className = "order-btn";
+    orderButton.textContent =
+      product.category.toLowerCase().includes("service")
+      ? "Book"
+      : "Order";
+
+    orderButton.addEventListener("click", () => {
+
+      openOrder(
+        product.name,
+        product.price,
+        product.category,
+        product.businessName,
+        product.ownerId
+      );
+
+    });
+
+    card.append(top, orderButton);
+    container.appendChild(card);
+
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+window.openOrder = function(
+  item,
+  price,
+  category,
+  business,
+  ownerId
+) {
 
   selectedItem = item;
   selectedPrice = price;
   selectedCategory = category;
   selectedBusiness = business;
+  selectedOwnerId = ownerId;
+
+  getElement("selectedBusiness").value = business;
 
   getElement("selectedItem").value =
-    item + " — ₹" + price + (category === "Chicken" ? "/kg" : "");
+    item + " — ₹" + price +
+    (category === "Chicken" ? "/kg" : "");
 
   getElement("quantity").value = 1;
+
   getElement("confirmButton").disabled = false;
-  getElement("confirmButton").textContent = "✅ Confirm Order";
+  getElement("confirmButton").textContent =
+    "✅ Confirm Order";
 
   getElement("orderBox").style.display = "block";
   getElement("successBox").style.display = "none";
 
-  window.calculateTotal();
+  calculateTotal();
 
   getElement("orderBox").scrollIntoView({
     behavior: "smooth",
@@ -504,7 +662,9 @@ window.closeOrder = function() {
 };
 
 window.continueBrowsing = function() {
+
   getElement("successBox").style.display = "none";
+
   getElement("searchInput").scrollIntoView({
     behavior: "smooth",
     block: "start"
@@ -513,7 +673,9 @@ window.continueBrowsing = function() {
 
 window.calculateTotal = function() {
 
-  const quantity = Number(getElement("quantity").value) || 0;
+  const quantity =
+    Number(getElement("quantity").value) || 0;
+
   const total = selectedPrice * quantity;
 
   getElement("totalAmount").textContent =
@@ -522,13 +684,17 @@ window.calculateTotal = function() {
 
 window.filterItems = function() {
 
-  const search = getElement("searchInput").value
-    .trim()
-    .toLowerCase();
+  const search =
+    getElement("searchInput").value.trim().toLowerCase();
 
   document.querySelectorAll(".item-card").forEach(card => {
-    const text = card.dataset.search.toLowerCase();
-    card.style.display = text.includes(search) ? "block" : "none";
+
+    const text =
+      card.dataset.search.toLowerCase();
+
+    card.style.display =
+      text.includes(search) ? "block" : "none";
+
   });
 };
 
@@ -540,26 +706,37 @@ window.getLocation = function() {
   }
 
   if (!window.isSecureContext) {
-    alert("Please open the website using its HTTPS address to use GPS.");
+    alert(
+      "Please open the website using its HTTPS address to use GPS."
+    );
     return;
   }
 
-  getElement("customerLocation").value = "Getting your location...";
+  getElement("customerLocation").value =
+    "Getting your location...";
 
   navigator.geolocation.getCurrentPosition(
 
     position => {
+
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
       getElement("customerLocation").value =
         "GPS coordinates: " + lat + ", " + lng +
-        "\nMap: https://www.google.com/maps?q=" + lat + "," + lng;
+        "\nMap: https://www.google.com/maps?q=" +
+        lat + "," + lng;
+
     },
 
     error => {
+
       getElement("customerLocation").value = "";
-      alert("Unable to get your location. Please allow location access or enter your address manually.");
+
+      alert(
+        "Unable to get your location. Please allow location access or enter your address manually."
+      );
+
     },
 
     {
@@ -571,16 +748,26 @@ window.getLocation = function() {
 };
 
 function getSavedOrders() {
+
   try {
-    return JSON.parse(localStorage.getItem("manaOoruRecentOrders") || "[]");
+
+    return JSON.parse(
+      localStorage.getItem("manaOoruRecentOrders") || "[]"
+    );
+
   } catch (error) {
+
     return [];
+
   }
 }
 
 function saveRecentOrder(order) {
+
   const orders = getSavedOrders();
+
   orders.unshift(order);
+
   localStorage.setItem(
     "manaOoruRecentOrders",
     JSON.stringify(orders.slice(0, 10))
@@ -593,8 +780,10 @@ function renderRecentOrders() {
   const orders = getSavedOrders();
 
   if (!orders.length) {
+
     container.innerHTML =
       '<p class="empty">No recent orders on this device yet.</p>';
+
     return;
   }
 
@@ -610,97 +799,195 @@ function renderRecentOrders() {
 
     const id = document.createElement("p");
     id.className = "small";
-    id.textContent = "Order ID: " + order.orderId;
+    id.textContent =
+      "Order ID: " + order.orderId;
 
     const details = document.createElement("p");
+
     details.textContent =
       "Quantity: " + order.quantity +
-      " | Total: ₹" + Number(order.total).toLocaleString("en-IN");
+      " | Total: ₹" +
+      Number(order.total).toLocaleString("en-IN");
 
     const status = document.createElement("span");
-    status.className = "status";
-    status.textContent = "Submitted — awaiting business response";
 
-    card.append(title, id, details, status);
+    status.className = "status";
+    status.textContent =
+      "Submitted — awaiting business response";
+
+    card.append(
+      title,
+      id,
+      details,
+      status
+    );
+
     container.appendChild(card);
+
   });
 }
 
 window.placeOrder = async function() {
 
-  const name = getElement("customerName").value.trim();
-  const phone = getElement("customerPhone").value.trim();
-  const location = getElement("customerLocation").value.trim();
-  const quantity = Number(getElement("quantity").value);
+  const name =
+    getElement("customerName").value.trim();
 
-  if (!selectedItem || selectedPrice <= 0) {
-    alert("Please select a product first.");
+  const phone =
+    getElement("customerPhone").value.trim();
+
+  const location =
+    getElement("customerLocation").value.trim();
+
+  const quantity =
+    Number(getElement("quantity").value);
+
+  if (
+    !selectedItem ||
+    selectedPrice <= 0 ||
+    !selectedOwnerId
+  ) {
+
+    alert(
+      "Please select a valid product from an approved business."
+    );
+
     return;
   }
 
-  if (!name || !phone || !location || location === "Getting your location...") {
-    alert("Please enter your name, mobile number and location.");
+  if (
+    !name ||
+    !phone ||
+    !location ||
+    location === "Getting your location..."
+  ) {
+
+    alert(
+      "Please enter your name, mobile number and location."
+    );
+
     return;
   }
 
   if (!/^[0-9+\-\s()]{7,15}$/.test(phone)) {
+
     alert("Please enter a valid mobile number.");
+
     return;
   }
 
-  if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 1000) {
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1 ||
+    quantity > 1000
+  ) {
+
     alert("Please enter a valid quantity.");
+
     return;
   }
 
-  const total = selectedPrice * quantity;
+  const total =
+    selectedPrice * quantity;
 
   if (!Number.isSafeInteger(total)) {
+
     alert("The total amount is invalid.");
+
     return;
   }
 
   const orderNumber =
-    "MO-" + Date.now().toString().slice(-8) +
-    "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+    "MO-" +
+    Date.now().toString().slice(-8) +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2, 6)
+      .toUpperCase();
 
   const orderData = {
+
     orderId: orderNumber,
+
     item: selectedItem,
+
     category: selectedCategory,
+
     businessName: selectedBusiness,
+
+    /*
+     * This is the important connection.
+     * It identifies the business owner.
+     */
+    ownerId: selectedOwnerId,
+
     price: selectedPrice,
+
     quantity: quantity,
+
     total: total,
+
     customerName: name,
+
     customerPhone: phone,
+
     customerLocation: location,
+
     status: "pending",
+
     createdAt: Date.now()
   };
 
-  const button = getElement("confirmButton");
+  const button =
+    getElement("confirmButton");
+
   button.disabled = true;
-  button.textContent = "Submitting Order...";
+
+  button.textContent =
+    "Submitting Order...";
 
   try {
 
-    await addDoc(collection(db, "orders"), orderData);
+    await addDoc(
+      collection(db, "orders"),
+      orderData
+    );
 
     saveRecentOrder({
+
       orderId: orderNumber,
+
       item: selectedItem,
+
+      businessName: selectedBusiness,
+
       quantity: quantity,
+
       total: total,
+
+      status: "pending",
+
       createdAt: Date.now()
+
     });
 
-    getElement("orderBox").style.display = "none";
-    getElement("successBox").style.display = "block";
-    getElement("orderId").textContent = "Order ID: " + orderNumber;
+    getElement("orderBox").style.display =
+      "none";
+
+    getElement("successBox").style.display =
+      "block";
+
+    getElement("orderId").textContent =
+      "Order ID: " + orderNumber;
+
     getElement("successDetails").textContent =
-      selectedItem + " × " + quantity +
-      " | Total ₹" + total.toLocaleString("en-IN");
+      selectedBusiness +
+      " • " +
+      selectedItem +
+      " × " +
+      quantity +
+      " | Total ₹" +
+      total.toLocaleString("en-IN");
 
     renderRecentOrders();
 
@@ -711,16 +998,22 @@ window.placeOrder = async function() {
 
   } catch (error) {
 
-    console.error("Order submission failed:", error);
+    console.error(
+      "Order submission failed:",
+      error
+    );
 
     alert(
-      "The order could not be submitted. Please check your internet connection and Firebase Firestore permissions, then try again."
+      "The order could not be submitted. Please check Firebase Firestore permissions."
     );
 
   } finally {
 
     button.disabled = false;
-    button.textContent = "✅ Confirm Order";
+
+    button.textContent =
+      "✅ Confirm Order";
+
   }
 };
 
@@ -730,5 +1023,3 @@ renderRecentOrders();
 
 </body>
 </html>
-
-
