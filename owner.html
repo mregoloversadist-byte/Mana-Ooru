@@ -248,7 +248,9 @@ loginForm.addEventListener("submit", async (event) => {
 );
 
 const applicationsSnapshot = await getDocs(applicationsQuery);
-
+console.log("Signed-in UID:", credential.user.uid);
+console.log("Applications found:", applicationsSnapshot.size);
+console.log("Application data:", applicationsSnapshot.docs.map(doc => doc.data()));
 if (applicationsSnapshot.empty) {
   await signOut(auth);
   throw new Error(
