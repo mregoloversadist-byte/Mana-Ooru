@@ -514,7 +514,13 @@ $("ordersList").addEventListener("click",async event=>{
   if(nextStatus==="billed")update.billedAt=serverTimestamp();
   if(nextStatus==="completed")update.completedAt=serverTimestamp();
 
-  await updateDoc(doc(db,"orders",id),update);
+  console.log("Updating order:", id, "with:", update);
+
+await updateDoc(doc(db, "orders", id), update);
+
+const verifySnapshot = await getDoc(doc(db, "orders", id));
+
+console.log("Saved order status:", verifySnapshot.data()?.status);
   $("newOrderAlert").classList.add("hidden");
   showMessage("ownerMessage","Order updated: "+statusLabel(nextStatus));
  }catch(error){
