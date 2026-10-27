@@ -272,12 +272,27 @@ onAuthStateChanged(auth,async user=>{
 
   startProductsListener();
   startOrdersListener();
- }catch(error){
-  console.error("Owner verification failed",error);
+ } catch (error) {
+
+  console.error("Owner verification failed", error);
+
   cleanupListeners();
-  await signOut(auth).catch(()=>{});
+
+  currentShopId = null;
+  currentOwnerId = null;
+
   $("loginCard").classList.remove("hidden");
   $("dashboard").classList.add("hidden");
+
+  showMessage(
+    "loginMessage",
+    "Owner verification error: " + error.message,
+    true
+  );
+
+} finally {
+  $("loginButton").disabled = false;
+ }
   showMessage("loginMessage",error.message||"Could not verify owner account.",true);
  }finally{
   loginButton.disabled=false;
