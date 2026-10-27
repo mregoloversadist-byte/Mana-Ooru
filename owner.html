@@ -520,7 +520,10 @@ await updateDoc(doc(db, "orders", id), update);
 
 const verifySnapshot = await getDoc(doc(db, "orders", id));
 
-console.log("Saved order status:", verifySnapshot.data()?.status);
+alert(
+  "Order ID: " + id +
+  "\nSaved status: " + verifySnapshot.data()?.status
+);
   $("newOrderAlert").classList.add("hidden");
   showMessage("ownerMessage","Order updated: "+statusLabel(nextStatus));
  }catch(error){
