@@ -525,7 +525,6 @@ console.log("Current status:", current);
 console.log("Requested status:", nextStatus);
 
 await updateDoc(order.ref, update);
-
 const verifySnapshot = await getDoc(order.ref);
 
 if (!verifySnapshot.exists() ||
@@ -534,13 +533,6 @@ if (!verifySnapshot.exists() ||
 }
 
 console.log("Verified saved status:", verifySnapshot.data().status);
-
-const verifySnapshot = await getDoc(doc(db, "orders", id));
-
-alert(
-  "Order ID: " + id +
-  "\nSaved status: " + verifySnapshot.data()?.status
-);
   $("newOrderAlert").classList.add("hidden");
   showMessage("ownerMessage","Order updated: "+statusLabel(nextStatus));
  }catch(error){
