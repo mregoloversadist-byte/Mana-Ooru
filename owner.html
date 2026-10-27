@@ -293,10 +293,7 @@ onAuthStateChanged(auth,async user=>{
 } finally {
   $("loginButton").disabled = false;
  }
-  showMessage("loginMessage",error.message||"Could not verify owner account.",true);
- }finally{
-  loginButton.disabled=false;
- }
+  
 });
 
 $("logoutButton").addEventListener("click",async()=>{
