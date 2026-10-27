@@ -510,13 +510,30 @@ $("ordersList").addEventListener("click",async event=>{
    throw new Error("This status change is not allowed.");
   }
 
-  const update={status:nextStatus};
-  if(nextStatus==="billed")update.billedAt=serverTimestamp();
-  if(nextStatus==="completed")update.completedAt=serverTimestamp();
+  const update = { status: nextStatus };
 
-  console.log("Updating order:", id, "with:", update);
+if (nextStatus === "billed") {
+  update.billedAt = serverTimestamp();
+}
 
-await updateDoc(doc(db, "orders", id), update);
+if (nextStatus === "completed") {
+  update.completedAt = serverTimestamp();
+}
+
+console.log("Updating Firestore document:", order.id);
+console.log("Current status:", current);
+console.log("Requested status:", nextStatus);
+
+await updateDoc(order.ref, update);
+
+const verifySnapshot = await getDoc(order.ref);
+
+if (!verifySnapshot.exists() ||
+    verifySnapshot.data().status !== nextStatus) {
+  throw new Error("Status update could not be verified.");
+}
+
+console.log("Verified saved status:", verifySnapshot.data().status);
 
 const verifySnapshot = await getDoc(doc(db, "orders", id));
 
