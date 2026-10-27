@@ -242,7 +242,6 @@ onAuthStateChanged(auth,async user=>{
   $("loginCard").classList.remove("hidden");
   loginButton.disabled=false;
   loginForm.reset();
-  showMessage("loginMessage","");
   return;
  }
 
@@ -250,18 +249,29 @@ onAuthStateChanged(auth,async user=>{
  showMessage("loginMessage","Checking your approved business...");
 
  try{
-  const applicationsQuery=query(
-   collection(db,"businessApplications"),
-   where("Ownerid","==",user.uid),
-   where("status","==","approved")
+  const applicationsQuery = query(
+  collection(db, "businessApplications"),
+  where("status", "==", "approved")
+);
+
+const applicationsSnapshot = await getDocs(applicationsQuery);
+
+const businessDoc = applicationsSnapshot.docs.find(d => {
+  const data = d.data();
+  return data.Ownerid === user.uid || data.ownerId === user.uid;
+});
+
+if (!businessDoc) {
+  throw new Error(
+    "No approved business found for this account. Check the owner UID."
   );
-  const applicationsSnapshot=await getDocs(applicationsQuery);
+}
 
   if(applicationsSnapshot.empty){
    throw new Error("No approved business found. Check the Ownerid field and ensure status is exactly approved.");
   }
 
-  const businessDoc=applicationsSnapshot.docs[0];
+  
   currentShopId=businessDoc.id;
   currentOwnerId=user.uid;
 
