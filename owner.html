@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mana-Ooru | Business Dashboard</title><style>
+<title>Mana-Ooru | Business Dashboard</title>
+
+<style>
 * {
   box-sizing: border-box;
 }
@@ -72,6 +75,22 @@ button:disabled {
   background: #555;
 }
 
+.accept-button {
+  background: #176b35;
+}
+
+.reject-button {
+  background: #dc2626;
+}
+
+.billed-button {
+  background: #b45309;
+}
+
+.complete-button {
+  background: #2563eb;
+}
+
 .product {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -96,376 +115,1247 @@ button:disabled {
 a {
   color: #176b35;
 }
-</style></head><body><header>
+
+/* New order notification */
+#newOrderAlert {
+  display: none;
+  background: #fff7ed;
+  border: 2px solid #f97316;
+  color: #9a3412;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  font-weight: bold;
+}
+
+#newOrderAlert button {
+  background: #f97316;
+  margin-top: 10px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-accepted {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-billed {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.status-completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.order-card {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 14px;
+  background: #fff;
+}
+
+.order-card.new-order {
+  border-color: #f97316;
+  background: #fffaf5;
+}
+
+.order-card h3 {
+  margin-top: 0;
+}
+
+.order-detail {
+  margin: 7px 0;
+  line-height: 1.5;
+}
+
+.order-button {
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
   <h1>🏪 Mana-Ooru</h1>
   <p>Business Owner Dashboard</p>
-</header><div class="container">  <div class="card">
+</header>
+
+<div class="container">
+
+  <div class="card">
     <h2>🔐 Owner Login</h2>
-    <p class="note">Log in using the email and password you registered with.</p><form id="loginForm">
-  <label for="email">Email Address</label>
-  <input id="email" type="email" autocomplete="username" required>
 
-  <label for="password">Password</label>
-  <input id="password" type="password"
-         autocomplete="current-password" required>
+    <p class="note">
+      Log in using the email and password you registered with.
+    </p>
 
-  <button id="loginButton" type="submit">Login</button>
-</form>
+    <form id="loginForm">
 
-<button id="logoutButton" class="secondary" type="button"
-        hidden>Logout</button>
+      <label for="email">Email Address</label>
+      <input id="email"
+             type="email"
+             autocomplete="username"
+             required>
 
-<p id="message" role="status"></p>
+      <label for="password">Password</label>
+      <input id="password"
+             type="password"
+             autocomplete="current-password"
+             required>
 
-  </div>  <div id="dashboard" hidden><div class="card">
-  <h2>📦 Add a Product or Service</h2>
+      <button id="loginButton" type="submit">
+        Login
+      </button>
 
-  <form id="productForm">
-    <label for="productName">Product or Service Name</label>
-    <input id="productName" maxlength="100" required
-           placeholder="e.g. Fresh Skinless Chicken">
+    </form>
 
-    <label for="productCategory">Category</label>
-    <select id="productCategory" required>
-      <option value="">Select category</option>
-      <option>Food</option>
-      <option>Tiffin</option>
-      <option>Chicken</option>
-      <option>Haircut</option>
-      <option>Beauty Parlour</option>
-      <option>Grocery</option>
-      <option>Other</option>
-    </select>
-
-    <label for="productPrice">Price in ₹</label>
-    <input id="productPrice" type="number"
-           min="0.01" max="1000000" step="0.01" required>
-
-    <label for="productUnit">Unit</label>
-    <select id="productUnit" required>
-      <option value="item">Per item</option>
-      <option value="kg">Per kg</option>
-      <option value="plate">Per plate</option>
-      <option value="service">Per service</option>
-    </select>
-
-    <label for="productDescription">Description (optional)</label>
-    <textarea id="productDescription" maxlength="500"
-              placeholder="Describe your product"></textarea>
-
-    <button id="addProductButton" type="submit">
-      Add Product
+    <button id="logoutButton"
+            class="secondary"
+            type="button"
+            hidden>
+      Logout
     </button>
-  </form>
 
-  <p class="note">
-    Product changes will be connected to the customer website
-    after the database integration is completed.
-  </p>
-</div>
-
-<div class="card">
-  <h2>🛍️ My Products</h2>
-  <div id="productsList">
-    <p class="note">Your products will appear here after Firebase is connected.</p>
+    <p id="message" role="status"></p>
   </div>
-</div>
 
-<div class="card">
-  <h2>📋 My Orders</h2>
-  <p class="note">Customer orders for your business:</p>
-  <div id="ordersList">
-    <p class="note">Log in to load your orders.</p>
+
+  <div id="dashboard" hidden>
+
+    <!-- NEW ORDER ALERT -->
+
+    <div id="newOrderAlert">
+      🔔 NEW ORDER RECEIVED!
+      <br>
+      <span id="newOrderAlertText">
+        A customer has placed a new order.
+      </span>
+
+      <button id="viewOrdersButton" type="button">
+        View New Order
+      </button>
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div class="card">
+
+      <h2>📦 Add a Product or Service</h2>
+
+      <form id="productForm">
+
+        <label for="productName">
+          Product or Service Name
+        </label>
+
+        <input id="productName"
+               maxlength="100"
+               required
+               placeholder="e.g. Fresh Skinless Chicken">
+
+
+        <label for="productCategory">
+          Category
+        </label>
+
+        <select id="productCategory" required>
+
+          <option value="">
+            Select category
+          </option>
+
+          <option>Food</option>
+          <option>Tiffin</option>
+          <option>Chicken</option>
+          <option>Haircut</option>
+          <option>Beauty Parlour</option>
+          <option>Grocery</option>
+          <option>Other</option>
+
+        </select>
+
+
+        <label for="productPrice">
+          Price in ₹
+        </label>
+
+        <input id="productPrice"
+               type="number"
+               min="0.01"
+               max="1000000"
+               step="0.01"
+               required>
+
+
+        <label for="productUnit">
+          Unit
+        </label>
+
+        <select id="productUnit" required>
+
+          <option value="item">
+            Per item
+          </option>
+
+          <option value="kg">
+            Per kg
+          </option>
+
+          <option value="plate">
+            Per plate
+          </option>
+
+          <option value="service">
+            Per service
+          </option>
+
+        </select>
+
+
+        <label for="productDescription">
+          Description (optional)
+        </label>
+
+        <textarea id="productDescription"
+                  maxlength="500"
+                  placeholder="Describe your product"></textarea>
+
+
+        <button id="addProductButton"
+                type="submit">
+          Add Product
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <!-- MY PRODUCTS -->
+
+    <div class="card">
+
+      <h2>🛍️ My Products</h2>
+
+      <div id="productsList">
+        <p class="note">
+          Your products will appear here.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ORDERS -->
+
+    <div class="card" id="ordersSection">
+
+      <h2>📋 My Orders</h2>
+
+      <p class="note">
+        Customer orders for your business:
+      </p>
+
+      <div id="ordersList">
+        <p class="note">
+          Log in to load your orders.
+        </p>
+      </div>
+
+    </div>
+
   </div>
+
+
+  <div class="card">
+
+    <p>
+      <a href="index.html">
+        ← Back to Customer Website
+      </a>
+    </p>
+
+    <p>
+      <a href="owner-register.html">
+        Register a Business
+      </a>
+    </p>
+
+  </div>
+
 </div>
 
-  </div>  <div class="card">
-    <p><a href="index.html">← Back to Customer Website</a></p>
-    <p><a href="owner-register.html">Register a Business</a></p>
-  </div></div>
- <script type="module">
+
+<script type="module">
+
 import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 
 import {
   getAuth,
   signInWithEmailAndPassword,
   signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 import {
-getFirestore,
-doc,
-getDoc,
-collection,
-addDoc,
-getDocs,
-query,
-where,
-serverTimestamp,
-updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  getFirestore,
+  doc,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  serverTimestamp,
+  updateDoc,
+  onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
-  authDomain: "mana-ooru-b7669.firebaseapp.com",
-  projectId: "mana-ooru-b7669",
-  storageBucket: "mana-ooru-b7669.firebasestorage.app",
-  messagingSenderId: "863965053518",
-  appId: "1:863965053518:web:5a73ed54f8513fef95f91f",
-  measurementId: "G-334M90X4WG"
+
+  apiKey:
+    "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
+
+  authDomain:
+    "mana-ooru-b7669.firebaseapp.com",
+
+  projectId:
+    "mana-ooru-b7669",
+
+  storageBucket:
+    "mana-ooru-b7669.firebasestorage.app",
+
+  messagingSenderId:
+    "863965053518",
+
+  appId:
+    "1:863965053518:web:5a73ed54f8513fef95f91f",
+
+  measurementId:
+    "G-334M90X4WG"
 };
 
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+
 const db = getFirestore(app);
 
-const loginForm = document.getElementById("loginForm");
-const message = document.getElementById("message");
-const dashboard = document.getElementById("dashboard");
-const logoutButton = document.getElementById("logoutButton");
-const loginButton = document.getElementById("loginButton");
-const productForm = document.getElementById("productForm");
-const productsList = document.getElementById("productsList");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const message =
+  document.getElementById("message");
+
+const dashboard =
+  document.getElementById("dashboard");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const productForm =
+  document.getElementById("productForm");
+
+const productsList =
+  document.getElementById("productsList");
+
+const ordersList =
+  document.getElementById("ordersList");
+
+const newOrderAlert =
+  document.getElementById("newOrderAlert");
+
+const newOrderAlertText =
+  document.getElementById("newOrderAlertText");
+
+const viewOrdersButton =
+  document.getElementById("viewOrdersButton");
+
 
 let currentShopId = null;
 
-loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  loginButton.disabled = true;
-  message.textContent = "Checking your account...";
 
-  try {
-    const credential = await signInWithEmailAndPassword(
-      auth,
-      document.getElementById("email").value.trim(),
-      document.getElementById("password").value
-    );
+/*
+ * This stores the active Firestore
+ * real-time listener.
+ *
+ * We remove it when the owner logs out.
+ */
 
-    const applicationsQuery = query(
-  collection(db, "businessApplications"),
-  where("Ownerid", "==", credential.user.uid),
-  where("status", "==", "approved")
-);
+let stopOrdersListener = null;
 
-const applicationsSnapshot = await getDocs(applicationsQuery);
-console.log("Signed-in UID:", credential.user.uid);
-console.log("Applications found:", applicationsSnapshot.size);
-console.log("Application data:", applicationsSnapshot.docs.map(doc => doc.data()));
-if (applicationsSnapshot.empty) {
-throw new Error(
-"No application matched. Signed-in UID: " +
-credential.user.uid +
-". Check the Ownerid field and status in Firestore."
-);
-}
 
-const businessDoc = applicationsSnapshot.docs[0];
-currentShopId = businessDoc.id;
+/*
+ * Used so that existing orders don't
+ * produce "NEW ORDER" alerts when
+ * the owner first logs in.
+ */
 
-    loginForm.hidden = true;
-    logoutButton.hidden = false;
-    dashboard.hidden = false;
-    message.textContent = "Welcome! You are signed in.";
-    await loadProducts();
-await loadOrders();
+let firstOrderSnapshot = true;
 
-  } catch (error) {
-    message.textContent = error.message || "Login failed.";
-  } finally {
-    loginButton.disabled = false;
-  }
-});
 
-logoutButton.addEventListener("click", async () => {
-  await signOut(auth);
-  currentShopId = null;
-  dashboard.hidden = true;
-  loginForm.hidden = false;
-  logoutButton.hidden = true;
-  productsList.replaceChildren();
-  message.textContent = "You have logged out.";
-});
+/*
+ * Prevents repeatedly notifying for
+ * the same order.
+ */
 
-async function loadProducts() {
-  productsList.replaceChildren();
+const notifiedOrderIds = new Set();
 
-  const productsQuery = query(
-    collection(db, "products"),
-    where("shopId", "==", currentShopId)
-  );
 
-  const snapshot = await getDocs(productsQuery);
+/*
+ * LOGIN
+ */
 
-  if (snapshot.empty) {
-    productsList.textContent = "You have not added any products yet.";
-    return;
-  }
+loginForm.addEventListener(
+  "submit",
+  async (event) => {
 
-  snapshot.forEach((productDoc) => {
-    const product = productDoc.data();
-    const item = document.createElement("div");
-    item.className = "product";
+    event.preventDefault();
 
-    const title = document.createElement("h3");
-    title.textContent = product.name || "Unnamed product";
+    loginButton.disabled = true;
 
-    const details = document.createElement("p");
-    details.textContent =
-      "Price: ₹" + product.price + " / " + (product.unit || "item");
+    message.textContent =
+      "Checking your account...";
 
-    item.append(title, details);
-    productsList.appendChild(item);
-  });
-}
-async function loadOrders() {
-  const ordersList = document.getElementById("ordersList");
-  ordersList.replaceChildren();
 
-  if (!auth.currentUser || !currentShopId) {
-    ordersList.textContent = "Please log in to view orders.";
-    return;
-  }
+    try {
 
-  try {
-    const ordersQuery = query(
-      collection(db, "orders"),
-      where("ownerId", "==", auth.currentUser.uid)
-    );
+      const credential =
+        await signInWithEmailAndPassword(
 
-    const snapshot = await getDocs(ordersQuery);
+          auth,
 
-    if (snapshot.empty) {
-      ordersList.textContent = "No orders received yet.";
-      return;
-    }
+          document
+            .getElementById("email")
+            .value
+            .trim(),
 
-    snapshot.forEach((orderDoc) => {
-      const order = orderDoc.data();
+          document
+            .getElementById("password")
+            .value
 
-      const card = document.createElement("div");
-      card.className = "product";
+        );
 
-      const title = document.createElement("h3");
-      title.textContent = order.item || "Customer order";
 
-      const details = document.createElement("p");
-      details.textContent =
-        "Order ID: " + (order.orderId || orderDoc.id) +
-        " | Quantity: " + (order.quantity || 1) +
-        " | Total: ₹" + (order.total || 0);
+      /*
+       * Find the approved business
+       * belonging to this owner.
+       */
 
-      const customer = document.createElement("p");
-      customer.textContent =
-        "Customer: " + (order.customerName || "Not provided") +
-        " | Phone: " + (order.customerPhone || "Not provided");
+      const applicationsQuery =
+        query(
 
-            const status = document.createElement("p");
-      status.textContent = "Status: " + (order.status || "pending");
+          collection(
+            db,
+            "businessApplications"
+          ),
 
-      card.append(title, details, customer, status);
+          where(
+            "Ownerid",
+            "==",
+            credential.user.uid
+          ),
 
-      if (!order.status || order.status === "pending") {
-        const acceptButton = document.createElement("button");
-        acceptButton.textContent = "✅ Accept Order";
+          where(
+            "status",
+            "==",
+            "approved"
+          )
 
-        acceptButton.addEventListener("click", async () => {
-          acceptButton.disabled = true;
-          rejectButton.disabled = true;
+        );
 
-          try {
-            await updateDoc(doc(db, "orders", orderDoc.id), {
-              status: "accepted"
-            });
 
-            await loadOrders();
-          } catch (error) {
-            console.error("Accept order failed:", error);
-            alert("Could not accept order: " + error.message);
-            acceptButton.disabled = false;
-            rejectButton.disabled = false;
-          }
-        });
+      const applicationsSnapshot =
+        await getDocs(
+          applicationsQuery
+        );
 
-        const rejectButton = document.createElement("button");
-        rejectButton.textContent = "❌ Reject Order";
 
-        rejectButton.addEventListener("click", async () => {
-          acceptButton.disabled = true;
-          rejectButton.disabled = true;
+      console.log(
+        "Signed-in UID:",
+        credential.user.uid
+      );
 
-          try {
-            await updateDoc(doc(db, "orders", orderDoc.id), {
-              status: "rejected"
-            });
+      console.log(
+        "Applications found:",
+        applicationsSnapshot.size
+      );
 
-            await loadOrders();
-          } catch (error) {
-            console.error("Reject order failed:", error);
-            alert("Could not reject order: " + error.message);
-            acceptButton.disabled = false;
-            rejectButton.disabled = false;
-          }
-        });
 
-        card.append(acceptButton, rejectButton);
+      console.log(
+        "Application data:",
+        applicationsSnapshot.docs.map(
+          doc => doc.data()
+        )
+      );
+
+
+      if (
+        applicationsSnapshot.empty
+      ) {
+
+        throw new Error(
+
+          "No application matched. Signed-in UID: " +
+          credential.user.uid +
+          ". Check the Ownerid field and status in Firestore."
+
+        );
+
       }
 
-      ordersList.appendChild(card);
-    });
 
-  } catch (error) {
-    console.error("Order loading failed:", error);
-    ordersList.textContent =
-      "Could not load orders. Check Firestore permissions.";
-  }
-}
-productForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+      const businessDoc =
+        applicationsSnapshot.docs[0];
 
-  if (!auth.currentUser || !currentShopId) {
-    message.textContent = "Please log in with an approved owner account.";
-    return;
-  }
 
-  const button = document.getElementById("addProductButton");
-  button.disabled = true;
+      currentShopId =
+        businessDoc.id;
 
-  try {
-    const name = document.getElementById("productName").value.trim();
-    const category = document.getElementById("productCategory").value;
-    const price = Number(document.getElementById("productPrice").value);
-    const unit = document.getElementById("productUnit").value;
-    const description =
-      document.getElementById("productDescription").value.trim();
 
-    if (!name || !category || !Number.isFinite(price) || price <= 0) {
-      throw new Error("Enter a valid product name, category, and price.");
+      loginForm.hidden = true;
+
+      logoutButton.hidden = false;
+
+      dashboard.hidden = false;
+
+
+      message.textContent =
+        "Welcome! You are signed in.";
+
+
+      await loadProducts();
+
+
+      /*
+       * Start live order monitoring.
+       */
+
+      startOrdersListener();
+
+
+    } catch (error) {
+
+      console.error(
+        "Login failed:",
+        error
+      );
+
+      message.textContent =
+        error.message ||
+        "Login failed.";
+
+    } finally {
+
+      loginButton.disabled = false;
+
     }
 
-    await addDoc(collection(db, "products"), {
-  name,
-  category,
-  price,
-  unit,
-  description,
-  shopId: currentShopId,
-  ownerId: auth.currentUser.uid,
-  available: true,
-  createdAt: serverTimestamp()
-});
+  }
+);
 
-    productForm.reset();
-    message.textContent = "Product saved successfully!";
-    await loadProducts();
+
+/*
+ * LOGOUT
+ */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    /*
+     * Stop live order listener.
+     */
+
+    if (stopOrdersListener) {
+
+      stopOrdersListener();
+
+      stopOrdersListener = null;
+
+    }
+
+
+    await signOut(auth);
+
+
+    currentShopId = null;
+
+    dashboard.hidden = true;
+
+    loginForm.hidden = false;
+
+    logoutButton.hidden = true;
+
+    productsList.replaceChildren();
+
+    ordersList.replaceChildren();
+
+    newOrderAlert.style.display =
+      "none";
+
+    message.textContent =
+      "You have logged out.";
+
+  }
+);
+
+
+/*
+ * PRODUCTS
+ */
+
+async function loadProducts() {
+
+  productsList.replaceChildren();
+
+
+  const productsQuery =
+    query(
+
+      collection(db, "products"),
+
+      where(
+        "shopId",
+        "==",
+        currentShopId
+      )
+
+    );
+
+
+  const snapshot =
+    await getDocs(
+      productsQuery
+    );
+
+
+  if (snapshot.empty) {
+
+    productsList.textContent =
+      "You have not added any products yet.";
+
+    return;
+
+  }
+
+
+  snapshot.forEach(
+    (productDoc) => {
+
+      const product =
+        productDoc.data();
+
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "product";
+
+
+      const title =
+        document.createElement("h3");
+
+      title.textContent =
+        product.name ||
+        "Unnamed product";
+
+
+      const details =
+        document.createElement("p");
+
+      details.textContent =
+        "Price: ₹" +
+        product.price +
+        " / " +
+        (product.unit || "item");
+
+
+      item.append(
+        title,
+        details
+      );
+
+
+      productsList.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/*
+ * LIVE ORDER LISTENER
+ *
+ * This replaces the old getDocs()
+ * order loading.
+ *
+ * The owner will now see new orders
+ * without refreshing.
+ */
+
+function startOrdersListener() {
+
+  /*
+   * Stop an older listener if one exists.
+   */
+
+  if (stopOrdersListener) {
+
+    stopOrdersListener();
+
+    stopOrdersListener = null;
+
+  }
+
+
+  firstOrderSnapshot = true;
+
+
+  const ordersQuery =
+    query(
+
+      collection(db, "orders"),
+
+      where(
+        "ownerId",
+        "==",
+        auth.currentUser.uid
+      )
+
+    );
+
+
+  stopOrdersListener =
+    onSnapshot(
+
+      ordersQuery,
+
+      (snapshot) => {
+
+        /*
+         * Render the complete current
+         * order list.
+         */
+
+        renderOrders(
+          snapshot
+        );
+
+
+        /*
+         * First snapshot contains existing
+         * orders. Don't call those NEW.
+         */
+
+        if (firstOrderSnapshot) {
+
+          firstOrderSnapshot = false;
+
+          return;
+
+        }
+
+
+        /*
+         * Check only newly added documents.
+         */
+
+        snapshot.docChanges()
+          .forEach(
+            (change) => {
+
+              if (
+                change.type !== "added"
+              ) {
+
+                return;
+
+              }
+
+
+              const order =
+                change.doc.data();
+
+
+              /*
+               * Only pending orders are
+               * considered new orders.
+               */
+
+              if (
+                order.status &&
+                order.status !== "pending"
+              ) {
+
+                return;
+
+              }
+
+
+              if (
+                notifiedOrderIds.has(
+                  change.doc.id
+                )
+              ) {
+
+                return;
+
+              }
+
+
+              notifiedOrderIds.add(
+                change.doc.id
+              );
+
+
+              showNewOrderNotification(
+                order
+              );
+
+            }
+          );
+
+      },
+
+      (error) => {
+
+        console.error(
+          "Live order listener failed:",
+          error
+        );
+
+
+        ordersList.textContent =
+          "Could not monitor orders. Check Firestore permissions.";
+
+      }
+
+    );
+
+}
+
+
+/*
+ * NEW ORDER ALERT
+ */
+
+function showNewOrderNotification(
+  order
+) {
+
+  const item =
+    order.item ||
+    "New order";
+
+
+  const total =
+    Number(order.total || 0)
+      .toLocaleString("en-IN");
+
+
+  newOrderAlertText.textContent =
+    item +
+    " • Quantity: " +
+    (order.quantity || 1) +
+    " • Total: ₹" +
+    total;
+
+
+  newOrderAlert.style.display =
+    "block";
+
+
+  /*
+   * Try a simple notification sound.
+   *
+   * Browser policies may block audio
+   * until the user has interacted with
+   * the page, so failure is ignored.
+   */
+
+  try {
+
+    const audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+
+    const oscillator =
+      audioContext.createOscillator();
+
+
+    const gain =
+      audioContext.createGain();
+
+
+    oscillator.frequency.value =
+      880;
+
+
+    gain.gain.value =
+      0.08;
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+      audioContext.destination
+    );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+      audioContext.currentTime + 0.25
+    );
 
   } catch (error) {
-    message.textContent =
-      "Could not save product: " + (error.message || "Please try again.");
-  } finally {
-    button.disabled = false;
+
+    console.log(
+      "Notification sound unavailable."
+    );
+
   }
-});
- </script>
-</body>
-</html>
+
+}
+
+
+/*
+ * View New Order button
+ */
+
+viewOrdersButton.addEventListener(
+  "click",
+  () => {
+
+    newOrderAlert.style.display =
+      "none";
+
+
+    document
+      .getElementById("ordersSection")
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+  }
+);
+
+
+/*
+ * RENDER ORDERS
+ */
+
+function renderOrders(
+  snapshot
+) {
+
+  ordersList.replaceChildren();
+
+
+  if (snapshot.empty) {
+
+    ordersList.textContent =
+      "No orders received yet.";
+
+    return;
+
+  }
+
+
+  /*
+   * Sort newest first.
+   */
+
+  const orderDocs =
+    [...snapshot.docs].sort(
+      (a, b) => {
+
+        const aData =
+          a.data();
+
+        const bData =
+          b.data();
+
+
+        return (
+          Number(
+            bData.createdAt || 0
+          ) -
+          Number(
+            aData.createdAt || 0
+          )
+        );
+
+      }
+    );
+
+
+  orderDocs.forEach(
+    (orderDoc) => {
+
+      const order =
+        orderDoc.data();
+
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "order-card";
+
+
+      if (
+        !order.status ||
+        order.status === "pending"
+      ) {
+
+        card.classList.add(
+          "new-order"
+        );
+
+      }
+
+
+      /*
+       * Item
+       */
+
+      const title =
+        document.createElement("h3");
+
+      title.textContent =
+        "📦 " +
+        (order.item ||
+         "Customer order");
+
+
+      /*
+       * Order details
+       */
+
+      const details =
+        document.createElement("p");
+
+      details.className =
+        "order-detail";
+
+
+      details.textContent =
+        "Order ID: " +
+        (order.orderId ||
+         orderDoc.id) +
+
+        " | Quantity: " +
+        (order.quantity || 1) +
+
+        " | Total: ₹" +
+        Number(
+          order.total || 0
+        ).toLocaleString("en-IN");
+
+
+      /*
+       * Customer
+       */
+
+      const customer =
+        document.createElement("p");
+
+      customer.className =
+        "order-detail";
+
+
+      customer.textContent =
+        "👤 Customer: " +
+        (order.customerName ||
+         "Not provided") +
+
+        " | 📞 " +
+
+        (order.customerPhone ||
+         "Not provided");
+
+
+      /*
+       * Location
+       */
+
+      const location =
+        document.createElement("p");
+
+      location.className =
+        "order-detail";
+
+
+      location.textContent =
+        "📍 Location: " +
+        (order.customerLocation ||
+         "Not provided");
+
+
+      /*
+       * Status badge
+       */
+
+      const status =
+        document.createElement("span");
+
+
+      status.className =
+        "status-badge";
+
+
+      const currentStatus =
+        order.status ||
+        "pending";
+
+
+      if (
+        currentStatus === "pending"
+      ) {
+
+        status.classList.add(
+          "status-pending"
+        );
+
+        status.textContent =
+          "🟡 NEW ORDER — Pending";
+
+      }
+
+      else if (
+        currentStatus === "accepted"
+      ) {
+
+        status.classList.add(
+          "status-accepted"
+        );
+
+        status.textContent =
+          "🔵 Accepted";
+
+      }
+
+      else if (
+        currentStatus === "billed"
+      ) {
+
+        status.classList.add(
+          "status-billed"
+        );
+
+        status.textContent =
+          "🟠 Billed";
+
+      }
+
+      else if (
+        currentStatus === "completed"
+      ) {
+
+        status.classList.add(
+          "status-completed"
+        );
+
+        status.textContent =
+          "🟢 Service Complete";
+
+      }
+
+      else if (
+        currentStatus === "rejected"
+      ) {
+
+        status.classList.add(
+          "status-rejected"
+        );
+
+        status.textContent =
+          "🔴 Rejected";
+
+      }
+
+      else {
+
+        status.textContent =
+          currentStatus;
+
+      }
+
+
+      card.append(
+        title,
+        details,
+        customer,
+        location,
+        status
+      );
+
+
+      /*
+       * PENDING
+       *
+       * Accept / Reject
+       */
+
+      if (
+        currentStatus === "pending"
+      ) {
+
+        const acceptButton =
+          document.createElement("button");
+
+
+        acceptButton.className =
+          "order-button accept-button";
+
+
+        acceptButton.textContent =
+          "✅ Accept Order";
+
+
+        const rejectButton =
+          document.
