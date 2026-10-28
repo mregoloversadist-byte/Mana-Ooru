@@ -678,6 +678,544 @@ console.log("Verified saved status:", verifySnapshot.data().status);
   showMessage("ownerMessage",error.message||"Could not update order.",true);
  }finally{button.disabled=false;}
 });
+/* ================= SALOON MANAGEMENT ================= */
+
+let salonServices = [];
+let salonSlots = [];
+
+
+/* Check whether this business is a saloon */
+
+function isSalonBusiness(data){
+
+ const category = String(
+  data.category ||
+  data.Category ||
+  ""
+ ).toLowerCase().trim();
+
+ return (
+  category.includes("salon") ||
+  category.includes("saloon") ||
+  category.includes("barber") ||
+  category.includes("hair")
+ );
+
+}
+
+
+/* Show saloon section */
+
+function showSalonSection(){
+
+ const section = document.getElementById("salonSection");
+
+ if(section){
+  section.classList.remove("hidden");
+ }
+
+}
+
+
+/* Hide saloon section */
+
+function hideSalonSection(){
+
+ const section = document.getElementById("salonSection");
+
+ if(section){
+  section.classList.add("hidden");
+ }
+
+}
+
+
+/* Load saloon settings */
+
+async function loadSalonSettings(){
+
+ if(!currentShopId)return;
+
+ try{
+
+  const settingsRef = doc(
+   db,
+   "salonSettings",
+   currentShopId
+  );
+
+  const snapshot =
+   await getDoc(settingsRef);
+
+  if(snapshot.exists()){
+
+   const data = snapshot.data();
+
+   document.getElementById(
+    "chairCount"
+   ).value =
+    Number(data.chairs) || 1;
+
+   document.getElementById(
+    "appointmentEnabled"
+   ).value =
+    data.appointmentsEnabled === false
+    ? "false"
+    : "true";
+
+   document.getElementById(
+    "appointmentDuration"
+   ).value =
+    String(
+     Number(data.appointmentDuration) || 30
+    );
+
+   salonServices =
+    Array.isArray(data.services)
+    ? data.services
+    : [];
+
+   salonSlots =
+    Array.isArray(data.slots)
+    ? data.slots
+    : [];
+
+  }
+
+  renderSalonServices();
+  renderSalonSlots();
+
+ }catch(error){
+
+  console.error(
+   "Saloon settings error:",
+   error
+  );
+
+  showMessage(
+   "salonMessage",
+   "Could not load saloon settings: " +
+   error.message,
+   true
+  );
+
+ }
+
+}
+
+
+/* Display services */
+
+function renderSalonServices(){
+
+ const box =
+  document.getElementById(
+   "salonServicesList"
+  );
+
+ if(!box)return;
+
+ if(!salonServices.length){
+
+  box.innerHTML =
+   '<p class="note">No services added yet.</p>';
+
+  return;
+
+ }
+
+ box.innerHTML =
+  salonServices.map(
+   (service,index)=>`
+
+   <div class="product">
+
+    <h3>
+     ✂️ ${escapeHtml(service.name)}
+    </h3>
+
+    <p>
+     Price:
+     <strong>
+      ${money(service.price)}
+     </strong>
+    </p>
+
+    <button
+     class="danger"
+     type="button"
+     data-salon-service="${index}">
+     🗑 Remove
+    </button>
+
+   </div>
+
+  `
+  ).join("");
+
+}
+
+
+/* Display time slots */
+
+function renderSalonSlots(){
+
+ const box =
+  document.getElementById(
+   "salonSlotsList"
+  );
+
+ if(!box)return;
+
+ if(!salonSlots.length){
+
+  box.innerHTML =
+   '<p class="note">No time slots added yet.</p>';
+
+  return;
+
+ }
+
+ box.innerHTML =
+  salonSlots.map(
+   (slot,index)=>`
+
+   <div class="product">
+
+    <h3>
+     ⏰ ${escapeHtml(slot.start)}
+     -
+     ${escapeHtml(slot.end)}
+    </h3>
+
+    <button
+     class="danger"
+     type="button"
+     data-salon-slot="${index}">
+     🗑 Remove
+    </button>
+
+   </div>
+
+  `
+  ).join("");
+
+}
+
+
+/* Add service */
+
+document
+.getElementById("addSalonServiceButton")
+.addEventListener(
+ "click",
+ ()=>{
+
+  const name =
+   document.getElementById(
+    "salonServiceName"
+   ).value.trim();
+
+  const price =
+   Number(
+    document.getElementById(
+     "salonServicePrice"
+    ).value
+   );
+
+  if(
+   !name ||
+   !Number.isFinite(price) ||
+   price <= 0
+  ){
+
+   showMessage(
+    "salonMessage",
+    "Enter a service name and valid price.",
+    true
+   );
+
+   return;
+
+  }
+
+  salonServices.push({
+   name:name,
+   price:price
+  });
+
+  document.getElementById(
+   "salonServiceName"
+  ).value="";
+
+  document.getElementById(
+   "salonServicePrice"
+  ).value="";
+
+  renderSalonServices();
+
+  showMessage(
+   "salonMessage",
+   "Service added. Save settings."
+  );
+
+ });
+
+
+/* Remove service */
+
+document
+.getElementById("salonServicesList")
+.addEventListener(
+ "click",
+ event=>{
+
+  const button =
+   event.target.closest(
+    "[data-salon-service]"
+   );
+
+  if(!button)return;
+
+  const index =
+   Number(
+    button.dataset.salonService
+   );
+
+  salonServices.splice(
+   index,
+   1
+  );
+
+  renderSalonServices();
+
+  showMessage(
+   "salonMessage",
+   "Service removed. Save settings."
+  );
+
+ });
+
+
+/* Add time slot */
+
+document
+.getElementById("addSalonSlotButton")
+.addEventListener(
+ "click",
+ ()=>{
+
+  const start =
+   document.getElementById(
+    "salonSlotStart"
+   ).value;
+
+  const end =
+   document.getElementById(
+    "salonSlotEnd"
+   ).value;
+
+  if(!start || !end){
+
+   showMessage(
+    "salonMessage",
+    "Select start and end time.",
+    true
+   );
+
+   return;
+
+  }
+
+  if(start >= end){
+
+   showMessage(
+    "salonMessage",
+    "End time must be later than start time.",
+    true
+   );
+
+   return;
+
+  }
+
+  salonSlots.push({
+   start:start,
+   end:end
+  });
+
+  salonSlots.sort(
+   (a,b)=>
+    a.start.localeCompare(b.start)
+  );
+
+  document.getElementById(
+   "salonSlotStart"
+  ).value="";
+
+  document.getElementById(
+   "salonSlotEnd"
+  ).value="";
+
+  renderSalonSlots();
+
+  showMessage(
+   "salonMessage",
+   "Time slot added. Save settings."
+  );
+
+ });
+
+
+/* Remove time slot */
+
+document
+.getElementById("salonSlotsList")
+.addEventListener(
+ "click",
+ event=>{
+
+  const button =
+   event.target.closest(
+    "[data-salon-slot]"
+   );
+
+  if(!button)return;
+
+  const index =
+   Number(
+    button.dataset.salonSlot
+   );
+
+  salonSlots.splice(
+   index,
+   1
+  );
+
+  renderSalonSlots();
+
+  showMessage(
+   "salonMessage",
+   "Time slot removed. Save settings."
+  );
+
+ });
+
+
+/* Save saloon settings */
+
+document
+.getElementById("saveSalonSettingsButton")
+.addEventListener(
+ "click",
+ async()=>{
+
+  if(!currentShopId ||
+     !currentOwnerId){
+
+   showMessage(
+    "salonMessage",
+    "Please log in again.",
+    true
+   );
+
+   return;
+
+  }
+
+  const chairs =
+   Number(
+    document.getElementById(
+     "chairCount"
+    ).value
+   );
+
+  if(
+   !Number.isInteger(chairs) ||
+   chairs < 1
+  ){
+
+   showMessage(
+    "salonMessage",
+    "Enter a valid number of chairs.",
+    true
+   );
+
+   return;
+
+  }
+
+  const button =
+   document.getElementById(
+    "saveSalonSettingsButton"
+   );
+
+  button.disabled=true;
+
+  try{
+
+   await setDoc(
+    doc(
+     db,
+     "salonSettings",
+     currentShopId
+    ),
+    {
+
+     shopId:currentShopId,
+
+     ownerId:currentOwnerId,
+
+     chairs:chairs,
+
+     appointmentsEnabled:
+      document.getElementById(
+       "appointmentEnabled"
+      ).value === "true",
+
+     appointmentDuration:
+      Number(
+       document.getElementById(
+        "appointmentDuration"
+       ).value
+      ),
+
+     services:
+      salonServices,
+
+     slots:
+      salonSlots,
+
+     updatedAt:
+      serverTimestamp()
+
+    },
+    {merge:true}
+   );
+
+   showMessage(
+    "salonMessage",
+    "✅ Saloon settings saved successfully."
+   );
+
+  }catch(error){
+
+   console.error(error);
+
+   showMessage(
+    "salonMessage",
+    "Could not save settings: " +
+    error.message,
+    true
+   );
+
+  }finally{
+
+   button.disabled=false;
+
+  }
+
+ });
 </script>
 </body>
 </html>
