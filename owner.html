@@ -390,6 +390,21 @@ if (!businessDoc) {
   
   currentShopId=businessDoc.id;
   currentOwnerId=user.uid;
+  /* SALOON CHECK */
+
+const businessData = businessDoc.data();
+
+if (isSalonBusiness(businessData)) {
+
+  showSalonSection();
+
+  await loadSalonSettings();
+
+} else {
+
+  hideSalonSection();
+
+}
 
   $("shopHeading").textContent="🏪 "+(businessDoc.data().businessName||"Your Business");
   $("loginCard").classList.add("hidden");
