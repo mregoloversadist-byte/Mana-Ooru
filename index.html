@@ -579,33 +579,20 @@ async function loadMarketplace() {
   }
 }
 function renderProducts() {
-
   const container = getElement("itemsContainer");
   container.replaceChildren();
 
-  if (!allProducts.length) {
-
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent =
-      "No products are available yet. Approved business owners can add products from their dashboard.";
-
-    container.appendChild(empty);
-    return;
-  }
-
+  // Display existing marketplace products
   allProducts.forEach(product => {
-
     const card = document.createElement("div");
     card.className = "item-card";
 
-    card.dataset.search =
-      (
-        product.name + " " +
-        product.category + " " +
-        product.businessName + " " +
-        product.description
-      ).toLowerCase();
+    card.dataset.search = (
+      product.name + " " +
+      product.category + " " +
+      product.businessName + " " +
+      product.description
+    ).toLowerCase();
 
     const top = document.createElement("div");
     top.className = "item-top";
@@ -616,11 +603,8 @@ function renderProducts() {
     title.textContent = product.name;
 
     const business = document.createElement("p");
-    business.innerHTML =
-      product.category +
-      " • <span class='business-name'>" +
-      escapeHtml(product.businessName) +
-      "</span>";
+    business.textContent =
+      product.category + " • " + product.businessName;
 
     left.append(title, business);
 
@@ -639,11 +623,10 @@ function renderProducts() {
     orderButton.className = "order-btn";
     orderButton.textContent =
       product.category.toLowerCase().includes("service")
-      ? "Book"
-      : "Order";
+        ? "Book"
+        : "Order";
 
     orderButton.addEventListener("click", () => {
-
       openOrder(
         product.name,
         product.price,
@@ -651,13 +634,124 @@ function renderProducts() {
         product.businessName,
         product.ownerId
       );
-
     });
 
     card.append(top, orderButton);
     container.appendChild(card);
-
   });
+
+  // Display approved salons and their saved services
+  allSalons.forEach(salon => {
+    const salonCard = document.createElement("div");
+    salonCard.className = "item-card";
+
+    salonCard.dataset.search = (
+      salon.businessName + " " +
+      salon.category + " " +
+      salon.address + " " +
+      salon.services.map(service => service.name || "").join(" ")
+    ).toLowerCase();
+
+    const heading = document.createElement("h3");
+    heading.textContent = "💈 " + salon.businessName;
+    salonCard.appendChild(heading);
+
+    const category = document.createElement("p");
+    category.textContent =
+      (salon.category || "Salon") +
+      (salon.address ? " • " + salon.address : "");
+    salonCard.appendChild(category);
+
+    const details = document.createElement("p");
+    details.textContent =
+      "Chairs: " + salon.chairs;
+    salonCard.appendChild(details);
+
+    if (!salon.appointmentsEnabled) {
+      const message = document.createElement("p");
+      message.textContent =
+        "Online appointments are currently unavailable.";
+      salonCard.appendChild(message);
+    } else if (!salon.services.length) {
+      const message = document.createElement("p");
+      message.textContent =
+        "Services have not been added yet.";
+      salonCard.appendChild(message);
+    } else {
+      const servicesHeading = document.createElement("h4");
+      servicesHeading.textContent = "Services & Prices";
+      salonCard.appendChild(servicesHeading);
+
+      salon.services.forEach(service => {
+        const row = document.createElement("div");
+        row.className = "item-top";
+
+        const serviceName = document.createElement("span");
+        serviceName.textContent =
+          service.name || "Salon service";
+
+        const servicePrice = document.createElement("span");
+        servicePrice.className = "price";
+        servicePrice.textContent =
+          "₹" + (Number(service.price) || 0)
+            .toLocaleString("en-IN");
+
+        row.append(serviceName, servicePrice);
+        salonCard.appendChild(row);
+
+        const bookButton = document.createElement("button");
+        bookButton.className = "order-btn";
+        bookButton.textContent = "Book " +
+          (service.name || "Service");
+
+        bookButton.addEventListener("click", () => {
+          openOrder(
+            service.name || "Salon service",
+            Number(service.price) || 0,
+            "Salon Service",
+            salon.businessName,
+            salon.ownerId
+          );
+        });
+
+        salonCard.appendChild(bookButton);
+      });
+
+      const slotsHeading = document.createElement("h4");
+      slotsHeading.textContent = "Available Time Slots";
+      salonCard.appendChild(slotsHeading);
+
+      if (!salon.slots.length) {
+        const noSlots = document.createElement("p");
+        noSlots.textContent =
+          "No time slots have been added yet.";
+        salonCard.appendChild(noSlots);
+      } else {
+        const slotsList = document.createElement("p");
+
+        slotsList.textContent = salon.slots
+          .map(slot => {
+            return (slot.start || "") +
+              (slot.end ? " – " + slot.end : "");
+          })
+          .filter(slot => slot.trim() !== "")
+          .join(" | ");
+
+        salonCard.appendChild(slotsList);
+      }
+    }
+
+    container.appendChild(salonCard);
+  });
+
+  // Show a message only if there are no products or salons
+  if (!allProducts.length && !allSalons.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent =
+      "No products or salons are available yet.";
+    container.appendChild(empty);
+  }
 }
 
 function escapeHtml(text) {
