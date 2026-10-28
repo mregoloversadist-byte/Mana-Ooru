@@ -456,9 +456,9 @@ async function loadMarketplace() {
   try {
 
     const businessQuery = query(
-      collection(db, "businessApplications"),
-      where("status", "==", "approved")
-    );
+  collection(db, "shops"),
+  where("status", "==", "approved")
+);
 
     const businessSnapshot = await getDocs(businessQuery);
 
@@ -471,21 +471,27 @@ async function loadMarketplace() {
 
     const approvedBusinesses = {};
 
-    businessSnapshot.forEach((businessDoc) => {
+businessSnapshot.forEach((businessDoc) => {
 
-      const business = businessDoc.data();
+  const business = businessDoc.data();
 
-      if (business.ownerId && business.businessName) {
+  const ownerId = business.ownerId;
+  const businessName = business.businessName;
 
-        approvedBusinesses[business.ownerId] = {
-          businessName: business.businessName,
-          ownerId: business.ownerId,
-          category: business.category || "Other"
-        };
+  if (ownerId && businessName) {
 
-      }
+    approvedBusinesses[ownerId] = {
+      id: businessDoc.id,
+      businessName: businessName,
+      ownerId: ownerId,
+      category: business.category || "Other",
+      address: business.address || "",
+      status: business.status || "approved"
+    };
 
-    });
+  }
+
+});
 
     /*
      * Products will be connected to ownerId.
