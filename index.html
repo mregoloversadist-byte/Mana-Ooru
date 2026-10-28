@@ -2,1207 +2,674 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mana-Ooru | Local Marketplace</title>
-
 <style>
-:root {
-  --primary: #2563eb;
-  --accent: #10b981;
-  --dark: #1f2937;
-  --light: #f3f4f6;
-  --danger: #ef4444;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, sans-serif;
-}
-
-body {
-  background: var(--light);
-  color: var(--dark);
-  padding-bottom: 40px;
-}
-
-header {
-  background: var(--primary);
-  color: white;
-  padding: 25px 15px;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 28px;
-}
-
-header p {
-  margin-top: 5px;
-}
-
-.container {
-  max-width: 650px;
-  margin: 20px auto;
-  padding: 0 15px;
-}
-
-.search {
-  width: 100%;
-  padding: 14px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  font-size: 16px;
-  margin-bottom: 20px;
-  background: white;
-}
-
-.section-title {
-  margin: 20px 0 10px;
-  font-size: 19px;
-}
-
-.item-card {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
-
-.item-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.item-card h3 {
-  font-size: 17px;
-}
-
-.item-card p {
-  color: #6b7280;
-  font-size: 13px;
-  margin-top: 5px;
-}
-
-.price {
-  font-weight: bold;
-  color: var(--primary);
-  font-size: 17px;
-  white-space: nowrap;
-}
-
-button {
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-
-.order-btn {
-  background: var(--accent);
-  color: white;
-  padding: 12px;
-  margin-top: 12px;
-  width: 100%;
-  font-size: 15px;
-}
-
-.booking-box {
-  display: none;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 20px;
-  box-shadow: 0 3px 10px rgba(0,0,0,.12);
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-textarea {
-  resize: vertical;
-}
-
-.total {
-  background: #f3f4f6;
-  padding: 15px;
-  border-radius: 8px;
-  margin: 15px 0;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.confirm {
-  width: 100%;
-  background: var(--primary);
-  color: white;
-  padding: 14px;
-  font-size: 16px;
-}
-
-.cancel {
-  width: 100%;
-  background: var(--danger);
-  color: white;
-  padding: 12px;
-  margin-top: 8px;
-}
-
-.location-btn {
-  width: 100%;
-  background: #111827;
-  color: white;
-  padding: 12px;
-  margin-top: 8px;
-}
-
-.success {
-  display: none;
-  background: #d1fae5;
-  color: #065f46;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 20px;
-  overflow-wrap: anywhere;
-}
-
-.order-id {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.status-box {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,.06);
-  overflow-wrap: anywhere;
-}
-
-.small {
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 6px;
-}
-
-.status {
-  display: inline-block;
-  background: #fef3c7;
-  color: #92400e;
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-size: 12px;
-  margin-top: 8px;
-}
-
-.empty {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  color: #6b7280;
-}
-
-.business-name {
-  font-weight: bold;
-  color: #176b35;
-}
-
-.loading {
-  background: white;
-  padding: 18px;
-  border-radius: 10px;
-  text-align: center;
-  color: #666;
-}
-
-footer {
-  text-align: center;
-  padding: 20px 10px;
-  color: #6b7280;
-  font-size: 13px;
-}
+:root{--p:#2563eb;--a:#10b981;--d:#ef4444;--l:#f3f4f6}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial}
+body{background:var(--l);color:#1f2937;padding-bottom:30px}
+header{background:var(--p);color:white;text-align:center;padding:24px 10px}
+header h1{font-size:28px}header p{margin-top:5px}
+nav{text-align:center;padding:12px}
+nav a{display:inline-block;color:white;text-decoration:none;padding:10px 14px;margin:4px;border-radius:7px;font-weight:bold}
+.reg{background:#176b35}.login{background:#2457a7}
+main{max-width:650px;margin:auto;padding:0 15px}
+.search,input,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+.search{margin:10px 0 18px;background:white}
+h2{font-size:19px;margin:18px 0 10px}
+.card,.booking,.success{background:white;padding:15px;margin:10px 0;border-radius:11px;box-shadow:0 2px 6px #ddd}
+.top{display:flex;justify-content:space-between;gap:10px}
+.card p{font-size:13px;color:#6b7280;margin-top:5px}
+.price{color:var(--p);font-weight:bold;font-size:17px;white-space:nowrap}
+button{width:100%;padding:12px;margin-top:10px;border:0;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;background:var(--a);color:white}
+button:disabled{opacity:.6}
+.cancel{background:var(--d)}
+.dark{background:#111827}
+.booking,.success{display:none}
+label{display:block;font-weight:bold;font-size:14px;margin-top:10px}
+.total{background:#f3f4f6;padding:14px;margin-top:12px;border-radius:8px;font-weight:bold;font-size:18px}
+.small{font-size:13px;color:#777;margin-top:5px}
+.status-box{background:white;padding:14px;margin:8px 0;border-radius:9px;box-shadow:0 2px 5px #ddd}
+.status{display:inline-block;background:#fef3c7;color:#92400e;padding:5px 9px;border-radius:6px;font-size:12px;margin-top:7px}
+.empty,.loading{background:white;padding:18px;border-radius:9px;color:#666;text-align:center}
+.success{background:#d1fae5;color:#065f46}
+.order-id{font-size:20px;font-weight:bold;margin:10px 0;overflow-wrap:anywhere}
+footer{text-align:center;color:#777;font-size:13px;padding:20px}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Mana-Ooru</h1>
-  <p>Your local marketplace</p>
-  <p>Discover and order from local businesses</p>
+<h1>Mana-Ooru</h1>
+<p>Your local marketplace</p>
+<p>Discover and order from local businesses</p>
 </header>
 
-<div style="text-align:center; padding:15px;">
-  <a href="owner-register.html"
-     style="display:inline-block;background:#176b35;color:white;padding:12px 18px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;">
-    🏪 Register Your Business
-  </a>
+<nav>
+<a class="reg" href="owner-register.html">🏪 Register Your Business</a>
+<a class="login" href="owner.html">🔐 Owner Login</a>
+</nav>
 
-  <a href="owner.html"
-     style="display:inline-block;background:#2457a7;color:white;padding:12px 18px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;">
-    🔐 Owner Login
-  </a>
-</div>
+<main>
 
-<main class="container">
+<input id="searchInput" class="search" type="search"
+placeholder="🔍 Search Biryani, Haircut, Idly..."
+oninput="filterItems()">
 
-<input
-  id="searchInput"
-  class="search"
-  type="search"
-  placeholder="🔍 Search Biryani, Haircut, Idly..."
-  oninput="filterItems()"
->
-
-<h2 class="section-title">Available Services & Products</h2>
+<h2>Available Services & Products</h2>
 
 <div id="itemsContainer">
-  <div class="loading">Loading local businesses...</div>
+<div class="loading">Loading local businesses...</div>
 </div>
 
-<section class="booking-box" id="orderBox">
+<section id="orderBox" class="booking">
+<h2>Complete Your Order</h2>
 
-  <h2 class="section-title">Complete Your Order</h2>
+<label>Business</label>
+<input id="selectedBusiness" readonly>
 
-  <div class="form-group">
-    <label>Business</label>
-    <input id="selectedBusiness" readonly>
-  </div>
+<label>Selected Item</label>
+<input id="selectedItem" readonly>
 
-  <div class="form-group">
-    <label for="selectedItem">Selected Item</label>
-    <input id="selectedItem" readonly>
-  </div>
+<label>Quantity</label>
+<input id="quantity" type="number" min="1" value="1"
+oninput="calculateTotal()">
 
-  <div class="form-group">
-    <label for="quantity">Quantity</label>
-    <input
-      id="quantity"
-      type="number"
-      min="1"
-      step="1"
-      value="1"
-      oninput="calculateTotal()"
-    >
-    <p class="small">For products sold by kg, quantity means kilograms.</p>
-  </div>
+<p class="small">For products sold by kg, quantity means kilograms.</p>
 
-  <div class="form-group">
-    <label for="customerName">Your Name</label>
-    <input id="customerName" type="text" maxlength="100"
-           autocomplete="name" placeholder="Enter your name">
-  </div>
+<label>Your Name</label>
+<input id="customerName" maxlength="100" placeholder="Enter your name">
 
-  <div class="form-group">
-    <label for="customerPhone">Mobile Number</label>
-    <input id="customerPhone" type="tel" maxlength="15"
-           autocomplete="tel" placeholder="Enter mobile number">
-  </div>
+<label>Mobile Number</label>
+<input id="customerPhone" type="tel" maxlength="15"
+placeholder="Enter mobile number">
 
-  <div class="form-group">
-    <label for="customerLocation">Delivery / Service Location</label>
+<label>Delivery / Service Location</label>
+<textarea id="customerLocation" rows="3"
+placeholder="Enter your address or location"></textarea>
 
-    <textarea id="customerLocation" rows="3"
-              placeholder="Enter your address or location"></textarea>
+<button class="dark" onclick="getLocation()">📍 Use My Current Location</button>
 
-    <button class="location-btn" onclick="getLocation()">
-      📍 Use My Current Location
-    </button>
+<div class="total">Total: ₹<span id="totalAmount">0</span></div>
 
-    <p class="small">
-      Allow location access when your browser asks.
-    </p>
-  </div>
-
-  <div class="total">
-    Total: ₹<span id="totalAmount">0</span>
-  </div>
-
-  <button class="confirm" id="confirmButton"
-          onclick="placeOrder()">
-    ✅ Confirm Order
-  </button>
-
-  <button class="cancel" onclick="closeOrder()">
-    Cancel
-  </button>
-
+<button id="confirmButton" onclick="placeOrder()">✅ Confirm Order</button>
+<button class="cancel" onclick="closeOrder()">Cancel</button>
 </section>
 
-<section class="success" id="successBox">
-
-  <h2>✅ Order Submitted!</h2>
-  <p>Your order was saved successfully.</p>
-
-  <div class="order-id" id="orderId"></div>
-  <p id="successDetails"></p>
-
-  <button class="order-btn" onclick="continueBrowsing()">
-    Continue Browsing
-  </button>
-
+<section id="successBox" class="success">
+<h2>✅ Order Submitted!</h2>
+<p>Your order was saved successfully.</p>
+<div id="orderId" class="order-id"></div>
+<p id="successDetails"></p>
+<button onclick="continueBrowsing()">Continue Browsing</button>
 </section>
 
-<h2 class="section-title">📦 My Recent Orders</h2>
-
+<h2>📦 My Recent Orders</h2>
 <div id="myOrders">
-  <p class="empty">Your recent orders will appear here.</p>
+<p class="empty">Your recent orders will appear here.</p>
 </div>
 
 </main>
 
-<footer>
-  Mana-Ooru • Supporting local businesses
-</footer>
+<footer>Mana-Ooru • Supporting local businesses</footer>
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,signInAnonymously}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,addDoc,getDocs,query,where,doc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import {
-  getAuth,
-  signInAnonymously
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  doc,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
-  authDomain: "mana-ooru-b7669.firebaseapp.com",
-  projectId: "mana-ooru-b7669",
-  storageBucket: "mana-ooru-b7669.firebasestorage.app",
-  messagingSenderId: "863965053518",
-  appId: "1:863965053518:web:5a73ed54f8513fef95f91f",
-  measurementId: "G-334M90X4WG"
+const firebaseConfig={
+apiKey:"AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
+authDomain:"mana-ooru-b7669.firebaseapp.com",
+projectId:"mana-ooru-b7669",
+storageBucket:"mana-ooru-b7669.firebasestorage.app",
+messagingSenderId:"863965053518",
+appId:"1:863965053518:web:5a73ed54f8513fef95f91f"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
 
-let selectedItem = "";
-let selectedPrice = 0;
-let selectedCategory = "";
-let selectedBusiness = "";
-let selectedOwnerId = "";
-let allProducts = [];
- let allProducts = [];
-  // Salon data for the customer marketplace
-let allSalons = [];
-let salonSettingsByShop = {};
+let allProducts=[];
+let allSalons=[];
+let selectedItem="";
+let selectedPrice=0;
+let selectedCategory="";
+let selectedBusiness="";
+let selectedOwnerId="";
 
-signInAnonymously(auth)
-  .then(() => {
-    console.log("Customer signed in anonymously");
-    loadMarketplace();
-  })
-  .catch((error) => {
-    console.error("Anonymous sign-in failed:", error);
-    showMarketplaceError(
-    "Sign-in failed: " + error.code + " — " + error.message
-    );
-  });
+const $=id=>document.getElementById(id);
 
-function getElement(id) {
-  return document.getElementById(id);
+function errorMessage(t){
+$("itemsContainer").innerHTML='<div class="empty">'+t+"</div>";
 }
 
-function showMarketplaceError(text) {
-  getElement("itemsContainer").innerHTML =
-    '<div class="empty">' + text + '</div>';
-}
-
-/*
- * Load only approved businesses.
- *
- * Each approved business supplies:
- * businessName
- * ownerId
- */
-async function loadMarketplace() {
-
-  try {
-
-
-async function loadMarketplace() {
-  try {
-    // Load approved businesses
-    const businessQuery = query(
-      collection(db, "shops"),
-      where("status", "==", "approved")
-    );
-
-    const businessSnapshot = await getDocs(businessQuery);
-    const approvedBusinesses = {};
-
-    businessSnapshot.forEach((businessDoc) => {
-      const business = businessDoc.data();
-
-      if (business.ownerId && business.businessName) {
-        approvedBusinesses[business.ownerId] = {
-          id: businessDoc.id,
-          businessName: business.businessName,
-          ownerId: business.ownerId,
-          category: business.category || "Other",
-          address: business.address || ""
-        };
-      }
-    });
-
-    // Load existing products
-    const productSnapshot = await getDocs(
-      collection(db, "products")
-    );
-
-    allProducts = [];
-
-    productSnapshot.forEach((productDoc) => {
-      const product = productDoc.data();
-
-      if (
-        product.ownerId &&
-        approvedBusinesses[product.ownerId]
-      ) {
-        allProducts.push({
-          id: productDoc.id,
-          name: product.name || "Unnamed product",
-          category: product.category || "Other",
-          price: Number(product.price) || 0,
-          unit: product.unit || "item",
-          description: product.description || "",
-          ownerId: product.ownerId,
-          businessName:
-            approvedBusinesses[product.ownerId].businessName
-        });
-      }
-    });
-
-    // Load salon settings
-    const salonSnapshot = await getDocs(
-      collection(db, "salonSettings")
-    );
-
-    const settingsByShopId = {};
-
-    salonSnapshot.forEach((settingsDoc) => {
-      settingsByShopId[settingsDoc.id] =
-        settingsDoc.data();
-    });
-
-    // Match salon settings with approved shops
-    allSalons = [];
-
-    Object.values(approvedBusinesses).forEach((business) => {
-      const category = String(
-        business.category || ""
-      ).toLowerCase();
-
-      const isSalon =
-        category.includes("salon") ||
-        category.includes("saloon") ||
-        category.includes("barber") ||
-        category.includes("hair");
-
-      if (!isSalon) return;
-
-      const settings = settingsByShopId[business.id];
-
-      if (!settings) return;
-
-      allSalons.push({
-        shopId: business.id,
-        ownerId: business.ownerId,
-        businessName: business.businessName,
-        category: business.category,
-        address: business.address,
-        chairs: Number(settings.chairs) || 1,
-        appointmentsEnabled:
-          settings.appointmentsEnabled === true,
-        appointmentDuration:
-          Number(settings.appointmentDuration) || 30,
-        services: Array.isArray(settings.services)
-          ? settings.services
-          : [],
-        slots: Array.isArray(settings.slots)
-          ? settings.slots
-          : []
-      });
-    });
-
-    console.log("Salon data loaded:", allSalons);
-
-    // Keep the existing product rendering
-    renderProducts();
-
-  } catch (error) {
-    console.error("Marketplace loading failed:", error);
-
-    showMarketplaceError(
-      "Could not load businesses, products, or salons. Please check Firestore permissions."
-    );
-  }
-}
-function renderProducts() {
-  const container = getElement("itemsContainer");
-  container.replaceChildren();
-
-  // Display existing marketplace products
-  allProducts.forEach(product => {
-    const card = document.createElement("div");
-    card.className = "item-card";
-
-    card.dataset.search = (
-      product.name + " " +
-      product.category + " " +
-      product.businessName + " " +
-      product.description
-    ).toLowerCase();
-
-    const top = document.createElement("div");
-    top.className = "item-top";
-
-    const left = document.createElement("div");
-
-    const title = document.createElement("h3");
-    title.textContent = product.name;
-
-    const business = document.createElement("p");
-    business.textContent =
-      product.category + " • " + product.businessName;
-
-    left.append(title, business);
-
-    const price = document.createElement("div");
-    price.className = "price";
-    price.textContent =
-      "₹" + product.price.toLocaleString("en-IN");
-
-    if (product.unit === "kg") {
-      price.textContent += "/kg";
-    }
-
-    top.append(left, price);
-
-    const orderButton = document.createElement("button");
-    orderButton.className = "order-btn";
-    orderButton.textContent =
-      product.category.toLowerCase().includes("service")
-        ? "Book"
-        : "Order";
-
-    orderButton.addEventListener("click", () => {
-      openOrder(
-        product.name,
-        product.price,
-        product.category,
-        product.businessName,
-        product.ownerId
-      );
-    });
-
-    card.append(top, orderButton);
-    container.appendChild(card);
-  });
-
-  // Display approved salons and their saved services
-  allSalons.forEach(salon => {
-    const salonCard = document.createElement("div");
-    salonCard.className = "item-card";
-
-    salonCard.dataset.search = (
-      salon.businessName + " " +
-      salon.category + " " +
-      salon.address + " " +
-      salon.services.map(service => service.name || "").join(" ")
-    ).toLowerCase();
-
-    const heading = document.createElement("h3");
-    heading.textContent = "💈 " + salon.businessName;
-    salonCard.appendChild(heading);
-
-    const category = document.createElement("p");
-    category.textContent =
-      (salon.category || "Salon") +
-      (salon.address ? " • " + salon.address : "");
-    salonCard.appendChild(category);
-
-    const details = document.createElement("p");
-    details.textContent =
-      "Chairs: " + salon.chairs;
-    salonCard.appendChild(details);
-
-    if (!salon.appointmentsEnabled) {
-      const message = document.createElement("p");
-      message.textContent =
-        "Online appointments are currently unavailable.";
-      salonCard.appendChild(message);
-    } else if (!salon.services.length) {
-      const message = document.createElement("p");
-      message.textContent =
-        "Services have not been added yet.";
-      salonCard.appendChild(message);
-    } else {
-      const servicesHeading = document.createElement("h4");
-      servicesHeading.textContent = "Services & Prices";
-      salonCard.appendChild(servicesHeading);
-
-      salon.services.forEach(service => {
-        const row = document.createElement("div");
-        row.className = "item-top";
-
-        const serviceName = document.createElement("span");
-        serviceName.textContent =
-          service.name || "Salon service";
-
-        const servicePrice = document.createElement("span");
-        servicePrice.className = "price";
-        servicePrice.textContent =
-          "₹" + (Number(service.price) || 0)
-            .toLocaleString("en-IN");
-
-        row.append(serviceName, servicePrice);
-        salonCard.appendChild(row);
-
-        const bookButton = document.createElement("button");
-        bookButton.className = "order-btn";
-        bookButton.textContent = "Book " +
-          (service.name || "Service");
-
-        bookButton.addEventListener("click", () => {
-          openOrder(
-            service.name || "Salon service",
-            Number(service.price) || 0,
-            "Salon Service",
-            salon.businessName,
-            salon.ownerId
-          );
-        });
-
-        salonCard.appendChild(bookButton);
-      });
-
-      const slotsHeading = document.createElement("h4");
-      slotsHeading.textContent = "Available Time Slots";
-      salonCard.appendChild(slotsHeading);
-
-      if (!salon.slots.length) {
-        const noSlots = document.createElement("p");
-        noSlots.textContent =
-          "No time slots have been added yet.";
-        salonCard.appendChild(noSlots);
-      } else {
-        const slotsList = document.createElement("p");
-
-        slotsList.textContent = salon.slots
-          .map(slot => {
-            return (slot.start || "") +
-              (slot.end ? " – " + slot.end : "");
-          })
-          .filter(slot => slot.trim() !== "")
-          .join(" | ");
-
-        salonCard.appendChild(slotsList);
-      }
-    }
-
-    container.appendChild(salonCard);
-  });
-
-  // Show a message only if there are no products or salons
-  if (!allProducts.length && !allSalons.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent =
-      "No products or salons are available yet.";
-    container.appendChild(empty);
-  }
-}
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-window.openOrder = function(
-  item,
-  price,
-  category,
-  business,
-  ownerId
-) {
-
-  selectedItem = item;
-  selectedPrice = price;
-  selectedCategory = category;
-  selectedBusiness = business;
-  selectedOwnerId = ownerId;
-
-  getElement("selectedBusiness").value = business;
-
-  getElement("selectedItem").value =
-    item + " — ₹" + price +
-    (category === "Chicken" ? "/kg" : "");
-
-  getElement("quantity").value = 1;
-
-  getElement("confirmButton").disabled = false;
-  getElement("confirmButton").textContent =
-    "✅ Confirm Order";
-
-  getElement("orderBox").style.display = "block";
-  getElement("successBox").style.display = "none";
-
-  calculateTotal();
-
-  getElement("orderBox").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-};
-
-window.closeOrder = function() {
-  getElement("orderBox").style.display = "none";
-};
-
-window.continueBrowsing = function() {
-
-  getElement("successBox").style.display = "none";
-
-  getElement("searchInput").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-};
-
-window.calculateTotal = function() {
-
-  const quantity =
-    Number(getElement("quantity").value) || 0;
-
-  const total = selectedPrice * quantity;
-
-  getElement("totalAmount").textContent =
-    total.toLocaleString("en-IN");
-};
-
-window.filterItems = function() {
-
-  const search =
-    getElement("searchInput").value.trim().toLowerCase();
-
-  document.querySelectorAll(".item-card").forEach(card => {
-
-    const text =
-      card.dataset.search.toLowerCase();
-
-    card.style.display =
-      text.includes(search) ? "block" : "none";
-
-  });
-};
-
-window.getLocation = function() {
-
-  if (!navigator.geolocation) {
-    alert("Location is not supported by this browser.");
-    return;
-  }
-
-  if (!window.isSecureContext) {
-    alert(
-      "Please open the website using its HTTPS address to use GPS."
-    );
-    return;
-  }
-
-  getElement("customerLocation").value =
-    "Getting your location...";
-
-  navigator.geolocation.getCurrentPosition(
-
-    position => {
-
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      getElement("customerLocation").value =
-        "GPS coordinates: " + lat + ", " + lng +
-        "\nMap: https://www.google.com/maps?q=" +
-        lat + "," + lng;
-
-    },
-
-    error => {
-
-      getElement("customerLocation").value = "";
-
-      alert(
-        "Unable to get your location. Please allow location access or enter your address manually."
-      );
-
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 60000
-    }
-  );
-};
-
-function getSavedOrders() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem("manaOoruRecentOrders") || "[]"
-    );
-
-  } catch (error) {
-
-    return [];
-
-  }
-}
-
-function saveRecentOrder(order) {
-
-  const orders = getSavedOrders();
-
-  orders.unshift(order);
-
-  localStorage.setItem(
-    "manaOoruRecentOrders",
-    JSON.stringify(orders.slice(0, 10))
-  );
-}
-
-function renderRecentOrders() {
-  const container = getElement("myOrders");
-  const orders = getSavedOrders();
-
-  // Stop old listeners before rebuilding the order list.
-  if (window.orderStatusListeners) {
-    window.orderStatusListeners.forEach(unsubscribe => unsubscribe());
-    window.orderStatusListeners.clear();
-  } else {
-    window.orderStatusListeners = new Map();
-  }
-
-  if (!orders.length) {
-    container.innerHTML =
-      '<p class="empty">No recent orders on this device yet.</p>';
-    return;
-  }
-
-  container.replaceChildren();
-
-  orders.forEach(order => {
-    const card = document.createElement("div");
-    card.className = "status-box";
-
-    const title = document.createElement("strong");
-    title.textContent = order.item || "Order";
-
-    const id = document.createElement("p");
-    id.className = "small";
-    id.textContent = "Order ID: " + order.orderId;
-
-    const details = document.createElement("p");
-    details.textContent =
-      "Quantity: " + order.quantity +
-      " | Total: ₹" +
-      Number(order.total).toLocaleString("en-IN");
-
-    const status = document.createElement("span");
-    status.className = "status";
-
-    function showStatus(value) {
-      if (value === "accepted") {
-        status.textContent = "✅ Order Accepted";
-      } else if (value === "rejected") {
-        status.textContent = "❌ Order Rejected";
-      } else {
-        status.textContent = "🟡 Pending — awaiting business response";
-      }
-    }
-
-    showStatus(order.status || "pending");
-
-    card.append(title, id, details, status);
-    container.appendChild(card);
-
-    if (order.firestoreDocId) {
-      const unsubscribe = onSnapshot(
-        doc(db, "orders", order.firestoreDocId),
-        snapshot => {
-          if (!snapshot.exists()) {
-            status.textContent = "Order status unavailable";
-            return;
-          }
-
-          const latestStatus = snapshot.data().status || "pending";
-          showStatus(latestStatus);
-
-          const savedOrders = getSavedOrders();
-          const updatedOrders = savedOrders.map(saved =>
-            saved.firestoreDocId === order.firestoreDocId
-              ? { ...saved, status: latestStatus }
-              : saved
-          );
-
-          localStorage.setItem(
-            "manaOoruRecentOrders",
-            JSON.stringify(updatedOrders)
-          );
-        },
-        error => {
-          console.error("Order status update failed:", error);
-        }
-      );
-
-      window.orderStatusListeners.set(
-        order.firestoreDocId,
-        unsubscribe
-      );
-    }
-  });
-}
-
-  
-
-window.placeOrder = async function() {
-
-  const name =
-    getElement("customerName").value.trim();
-
-  const phone =
-    getElement("customerPhone").value.trim();
-
-  const location =
-    getElement("customerLocation").value.trim();
-
-  const quantity =
-    Number(getElement("quantity").value);
-
-  if (
-    !selectedItem ||
-    selectedPrice <= 0 ||
-    !selectedOwnerId
-  ) {
-
-    alert(
-      "Please select a valid product from an approved business."
-    );
-
-    return;
-  }
-
-  if (
-    !name ||
-    !phone ||
-    !location ||
-    location === "Getting your location..."
-  ) {
-
-    alert(
-      "Please enter your name, mobile number and location."
-    );
-
-    return;
-  }
-
-  if (!/^[0-9+\-\s()]{7,15}$/.test(phone)) {
-
-    alert("Please enter a valid mobile number.");
-
-    return;
-  }
-
-  if (
-    !Number.isSafeInteger(quantity) ||
-    quantity < 1 ||
-    quantity > 1000
-  ) {
-
-    alert("Please enter a valid quantity.");
-
-    return;
-  }
-
-  const total =
-    selectedPrice * quantity;
-
-  if (!Number.isSafeInteger(total)) {
-
-    alert("The total amount is invalid.");
-
-    return;
-  }
-
-  const orderNumber =
-    "MO-" +
-    Date.now().toString().slice(-8) +
-    "-" +
-    Math.random()
-      .toString(36)
-      .slice(2, 6)
-      .toUpperCase();
-
-  const orderData = {
-
-    orderId: orderNumber,
-
-    item: selectedItem,
-
-    category: selectedCategory,
-
-    businessName: selectedBusiness,
-
-    /*
-     * This is the important connection.
-     * It identifies the business owner.
-     */
-    ownerId: selectedOwnerId,
-
-    price: selectedPrice,
-
-    quantity: quantity,
-
-    total: total,
-
-    customerName: name,
-    customerId: auth.currentUser.uid,
-
-    customerPhone: phone,
-
-    customerLocation: location,
-
-    status: "pending",
-
-    createdAt: Date.now()
-  };
-
-  const button =
-    getElement("confirmButton");
-
-  button.disabled = true;
-
-  button.textContent =
-    "Submitting Order...";
-
-  try {
-
-    const orderRef = await addDoc(
-  collection(db, "orders"),
-  orderData
+signInAnonymously(auth).then(loadMarketplace).catch(e=>{
+console.error(e);
+errorMessage("Sign-in failed. Please refresh the page.");
+});
+
+async function loadMarketplace(){
+try{
+
+const shopSnap=await getDocs(
+query(collection(db,"shops"),where("status","==","approved"))
 );
 
-    saveRecentOrder({
-      
-firestoreDocId: orderRef.id,
-      orderId: orderNumber,
+const shops={};
 
-      item: selectedItem,
+shopSnap.forEach(d=>{
+const x=d.data();
+if(x.ownerId&&x.businessName)
+shops[x.ownerId]={
+id:d.id,
+businessName:x.businessName,
+ownerId:x.ownerId,
+category:x.category||"Other",
+address:x.address||""
+};
+});
 
-      businessName: selectedBusiness,
+const productSnap=await getDocs(collection(db,"products"));
+allProducts=[];
 
-      quantity: quantity,
+productSnap.forEach(d=>{
+const x=d.data(),s=shops[x.ownerId];
 
-      total: total,
+if(s)allProducts.push({
+id:d.id,
+name:x.name||"Unnamed product",
+category:x.category||"Other",
+price:Number(x.price)||0,
+unit:x.unit||"item",
+description:x.description||"",
+ownerId:x.ownerId,
+businessName:s.businessName
+});
+});
 
-      status: "pending",
+const salonSnap=await getDocs(collection(db,"salonSettings"));
+const settings={};
 
-      createdAt: Date.now()
+salonSnap.forEach(d=>settings[d.id]=d.data());
 
-    });
+allSalons=[];
 
-    getElement("orderBox").style.display =
-      "none";
+Object.values(shops).forEach(s=>{
+const c=String(s.category).toLowerCase();
 
-    getElement("successBox").style.display =
-      "block";
+if(!/salon|saloon|barber|hair/.test(c))return;
 
-    getElement("orderId").textContent =
-      "Order ID: " + orderNumber;
+const z=settings[s.id];
+if(!z)return;
 
-    getElement("successDetails").textContent =
-      selectedBusiness +
-      " • " +
-      selectedItem +
-      " × " +
-      quantity +
-      " | Total ₹" +
-      total.toLocaleString("en-IN");
+allSalons.push({
+shopId:s.id,
+ownerId:s.ownerId,
+businessName:s.businessName,
+category:s.category,
+address:s.address,
+chairs:Number(z.chairs)||1,
+appointmentsEnabled:z.appointmentsEnabled===true,
+appointmentDuration:Number(z.appointmentDuration)||30,
+services:Array.isArray(z.services)?z.services:[],
+slots:Array.isArray(z.slots)?z.slots:[]
+});
+});
 
-    renderRecentOrders();
+console.log("Products:",allProducts);
+console.log("Salons:",allSalons);
 
-    getElement("successBox").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+renderProducts();
 
-  } catch (error) {
+}catch(e){
+console.error("Marketplace loading failed:",e);
+errorMessage("Could not load marketplace. Please refresh.");
+}
+}
 
-    console.error(
-      "Order submission failed:",
-      error
-    );
+function renderProducts(){
 
-    alert(
-      "The order could not be submitted. Please check Firebase Firestore permissions."
-    );
+const box=$("itemsContainer");
+box.replaceChildren();
 
-  } finally {
+allProducts.forEach(p=>{
 
-    button.disabled = false;
+const card=document.createElement("div");
+card.className="card";
+card.dataset.search=
+`${p.name} ${p.category} ${p.businessName} ${p.description}`.toLowerCase();
 
-    button.textContent =
-      "✅ Confirm Order";
+const top=document.createElement("div");
+top.className="top";
 
-  }
+const left=document.createElement("div");
+
+const title=document.createElement("h3");
+title.textContent=p.name;
+
+const business=document.createElement("p");
+business.textContent=p.category+" • "+p.businessName;
+
+left.append(title,business);
+
+const price=document.createElement("div");
+price.className="price";
+price.textContent="₹"+p.price.toLocaleString("en-IN")+
+(p.unit==="kg"?"/kg":"");
+
+top.append(left,price);
+
+const btn=document.createElement("button");
+btn.textContent=p.category.toLowerCase().includes("service")?"Book":"Order";
+
+btn.onclick=()=>openOrder(
+p.name,p.price,p.category,p.businessName,p.ownerId
+);
+
+card.append(top,btn);
+box.appendChild(card);
+
+});
+
+allSalons.forEach(s=>{
+
+const card=document.createElement("div");
+card.className="card";
+
+card.dataset.search=(
+s.businessName+" "+s.category+" "+s.address+" "+
+s.services.map(x=>x.name||"").join(" ")
+).toLowerCase();
+
+const h=document.createElement("h3");
+h.textContent="💈 "+s.businessName;
+
+const p=document.createElement("p");
+p.textContent=(s.category||"Salon")+
+(s.address?" • "+s.address:"");
+
+const chairs=document.createElement("p");
+chairs.textContent="Chairs: "+s.chairs;
+
+card.append(h,p,chairs);
+
+if(!s.appointmentsEnabled){
+
+const m=document.createElement("p");
+m.textContent="Online appointments are currently unavailable.";
+card.appendChild(m);
+
+}else{
+
+const sh=document.createElement("h4");
+sh.textContent="Services & Prices";
+card.appendChild(sh);
+
+if(!s.services.length){
+const m=document.createElement("p");
+m.textContent="Services have not been added yet.";
+card.appendChild(m);
+}
+
+s.services.forEach(v=>{
+
+const row=document.createElement("div");
+row.className="top";
+
+const n=document.createElement("span");
+n.textContent=v.name||"Salon service";
+
+const pr=document.createElement("span");
+pr.className="price";
+pr.textContent="₹"+(Number(v.price)||0).toLocaleString("en-IN");
+
+row.append(n,pr);
+card.appendChild(row);
+
+const b=document.createElement("button");
+b.textContent="Book "+(v.name||"Service");
+
+b.onclick=()=>openOrder(
+v.name||"Salon service",
+Number(v.price)||0,
+"Salon Service",
+s.businessName,
+s.ownerId
+);
+
+card.appendChild(b);
+
+});
+
+const sh=document.createElement("h4");
+sh.textContent="Available Time Slots";
+card.appendChild(sh);
+
+if(!s.slots.length){
+
+const m=document.createElement("p");
+m.textContent="No time slots have been added yet.";
+card.appendChild(m);
+
+}else{
+
+const slots=document.createElement("p");
+slots.textContent=s.slots.map(v=>
+(v.start||"")+(v.end?" – "+v.end:"")
+).filter(v=>v.trim()).join(" | ");
+
+card.appendChild(slots);
+
+}
+
+}
+
+box.appendChild(card);
+
+});
+
+if(!allProducts.length&&!allSalons.length)
+box.innerHTML='<div class="empty">No products or salons are available yet.</div>';
+}
+
+window.filterItems=()=>{
+
+const q=$("searchInput").value.trim().toLowerCase();
+
+document.querySelectorAll(".card").forEach(c=>{
+if(c.dataset.search)
+c.style.display=c.dataset.search.includes(q)?"block":"none";
+});
+
+};
+
+window.openOrder=(item,price,category,business,ownerId)=>{
+
+selectedItem=item;
+selectedPrice=price;
+selectedCategory=category;
+selectedBusiness=business;
+selectedOwnerId=ownerId;
+
+$("selectedBusiness").value=business;
+$("selectedItem").value=
+item+" — ₹"+price+
+(category==="Chicken"?"/kg":"");
+
+$("quantity").value=1;
+$("confirmButton").disabled=false;
+$("confirmButton").textContent="✅ Confirm Order";
+$("orderBox").style.display="block";
+$("successBox").style.display="none";
+
+calculateTotal();
+$("orderBox").scrollIntoView({behavior:"smooth"});
+
+};
+
+window.closeOrder=()=>{
+$("orderBox").style.display="none";
+};
+
+window.continueBrowsing=()=>{
+$("successBox").style.display="none";
+$("searchInput").scrollIntoView({behavior:"smooth"});
+};
+
+window.calculateTotal=()=>{
+
+const q=Number($("quantity").value)||0;
+
+$("totalAmount").textContent=
+(selectedPrice*q).toLocaleString("en-IN");
+
+};
+
+window.getLocation=()=>{
+
+if(!navigator.geolocation)
+return alert("Location is not supported.");
+
+if(!window.isSecureContext)
+return alert("Please open the HTTPS website to use GPS.");
+
+$("customerLocation").value="Getting your location...";
+
+navigator.geolocation.getCurrentPosition(
+p=>{
+const lat=p.coords.latitude,lng=p.coords.longitude;
+$("customerLocation").value=
+"GPS coordinates: "+lat+", "+lng+
+"\nMap: https://www.google.com/maps?q="+lat+","+lng;
+},
+()=>{
+$("customerLocation").value="";
+alert("Unable to get location. Please allow GPS or enter your address.");
+},
+{enableHighAccuracy:true,timeout:15000,maximumAge:60000}
+);
+
+};
+
+function getSavedOrders(){
+
+try{
+return JSON.parse(
+localStorage.getItem("manaOoruRecentOrders")||"[]"
+);
+}catch(e){return[]}
+
+}
+
+function saveRecentOrder(o){
+
+const a=getSavedOrders();
+a.unshift(o);
+
+localStorage.setItem(
+"manaOoruRecentOrders",
+JSON.stringify(a.slice(0,10))
+);
+
+}
+
+function renderRecentOrders(){
+
+const box=$("myOrders");
+const orders=getSavedOrders();
+
+if(window.orderStatusListeners){
+window.orderStatusListeners.forEach(u=>u());
+window.orderStatusListeners.clear();
+}else{
+window.orderStatusListeners=new Map();
+}
+
+if(!orders.length){
+box.innerHTML=
+'<p class="empty">No recent orders on this device yet.</p>';
+return;
+}
+
+box.replaceChildren();
+
+orders.forEach(o=>{
+
+const card=document.createElement("div");
+card.className="status-box";
+
+const title=document.createElement("strong");
+title.textContent=o.item||"Order";
+
+const id=document.createElement("p");
+id.className="small";
+id.textContent="Order ID: "+o.orderId;
+
+const details=document.createElement("p");
+details.textContent=
+"Quantity: "+o.quantity+
+" | Total: ₹"+Number(o.total).toLocaleString("en-IN");
+
+const status=document.createElement("span");
+status.className="status";
+
+const showStatus=s=>{
+status.textContent=
+s==="accepted"?"✅ Order Accepted":
+s==="rejected"?"❌ Order Rejected":
+"🟡 Pending — awaiting business response";
+};
+
+showStatus(o.status||"pending");
+
+card.append(title,id,details,status);
+box.appendChild(card);
+
+if(o.firestoreDocId){
+
+const unsubscribe=onSnapshot(
+doc(db,"orders",o.firestoreDocId),
+snap=>{
+
+if(!snap.exists()){
+status.textContent="Order status unavailable";
+return;
+}
+
+const s=snap.data().status||"pending";
+showStatus(s);
+
+const updated=getSavedOrders().map(v=>
+v.firestoreDocId===o.firestoreDocId?
+{...v,status:s}:v
+);
+
+localStorage.setItem(
+"manaOoruRecentOrders",
+JSON.stringify(updated)
+);
+
+},
+e=>console.error("Status update failed:",e)
+);
+
+window.orderStatusListeners.set(
+o.firestoreDocId,unsubscribe
+);
+
+}
+
+});
+
+}
+
+window.placeOrder=async()=>{
+
+const name=$("customerName").value.trim();
+const phone=$("customerPhone").value.trim();
+const location=$("customerLocation").value.trim();
+const quantity=Number($("quantity").value);
+
+if(!selectedItem||selectedPrice<=0||!selectedOwnerId)
+return alert("Please select a valid product from an approved business.");
+
+if(!name||!phone||!location||
+location==="Getting your location...")
+return alert("Please enter your name, mobile number and location.");
+
+if(!/^[0-9+\-\s()]{7,15}$/.test(phone))
+return alert("Please enter a valid mobile number.");
+
+if(!Number.isSafeInteger(quantity)||quantity<1||quantity>1000)
+return alert("Please enter a valid quantity.");
+
+const total=selectedPrice*quantity;
+
+if(!Number.isSafeInteger(total))
+return alert("The total amount is invalid.");
+
+const orderNumber=
+"MO-"+Date.now().toString().slice(-8)+"-"+
+Math.random().toString(36).slice(2,6).toUpperCase();
+
+const orderData={
+orderId:orderNumber,
+item:selectedItem,
+category:selectedCategory,
+businessName:selectedBusiness,
+ownerId:selectedOwnerId,
+price:selectedPrice,
+quantity,
+total,
+customerName:name,
+customerId:auth.currentUser.uid,
+customerPhone:phone,
+customerLocation:location,
+status:"pending",
+createdAt:Date.now()
+};
+
+const button=$("confirmButton");
+button.disabled=true;
+button.textContent="Submitting Order...";
+
+try{
+
+const ref=await addDoc(
+collection(db,"orders"),orderData
+);
+
+saveRecentOrder({
+firestoreDocId:ref.id,
+orderId:orderNumber,
+item:selectedItem,
+businessName:selectedBusiness,
+quantity,
+total,
+status:"pending",
+createdAt:Date.now()
+});
+
+$("orderBox").style.display="none";
+$("successBox").style.display="block";
+
+$("orderId").textContent=
+"Order ID: "+orderNumber;
+
+$("successDetails").textContent=
+selectedBusiness+" • "+selectedItem+
+" × "+quantity+
+" | Total ₹"+total.toLocaleString("en-IN");
+
+renderRecentOrders();
+
+$("successBox").scrollIntoView({
+behavior:"smooth",block:"start"
+});
+
+}catch(e){
+
+console.error("Order submission failed:",e);
+
+alert(
+"The order could not be submitted. Please check Firebase Firestore permissions."
+);
+
+}finally{
+
+button.disabled=false;
+button.textContent="✅ Confirm Order";
+
+}
+
 };
 
 renderRecentOrders();
 
 </script>
-
 </body>
 </html>
