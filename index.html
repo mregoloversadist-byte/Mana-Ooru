@@ -422,6 +422,7 @@ let selectedCategory = "";
 let selectedBusiness = "";
 let selectedOwnerId = "";
 let allProducts = [];
+ let allProducts = [];
   // Salon data for the customer marketplace
 let allSalons = [];
 let salonSettingsByShop = {};
@@ -458,48 +459,33 @@ async function loadMarketplace() {
 
   try {
 
+
+async function loadMarketplace() {
+  try {
+    // Load approved businesses
     const businessQuery = query(
-  collection(db, "shops"),
-  where("status", "==", "approved")
-);
+      collection(db, "shops"),
+      where("status", "==", "approved")
+    );
 
     const businessSnapshot = await getDocs(businessQuery);
-
-    if (businessSnapshot.empty) {
-      showMarketplaceError(
-        "No approved local businesses are available yet."
-      );
-      return;
-    }
-
     const approvedBusinesses = {};
 
-businessSnapshot.forEach((businessDoc) => {
+    businessSnapshot.forEach((businessDoc) => {
+      const business = businessDoc.data();
 
-  const business = businessDoc.data();
+      if (business.ownerId && business.businessName) {
+        approvedBusinesses[business.ownerId] = {
+          id: businessDoc.id,
+          businessName: business.businessName,
+          ownerId: business.ownerId,
+          category: business.category || "Other",
+          address: business.address || ""
+        };
+      }
+    });
 
-  const ownerId = business.ownerId;
-  const businessName = business.businessName;
-
-  if (ownerId && businessName) {
-
-    approvedBusinesses[ownerId] = {
-      id: businessDoc.id,
-      businessName: businessName,
-      ownerId: ownerId,
-      category: business.category || "Other",
-      address: business.address || "",
-      status: business.status || "approved"
-    };
-
-  }
-
-});
-
-    /*
-     * Products will be connected to ownerId.
-     * The owner dashboard will add this field next.
-     */
+    // Load existing products
     const productSnapshot = await getDocs(
       collection(db, "products")
     );
@@ -507,14 +493,12 @@ businessSnapshot.forEach((businessDoc) => {
     allProducts = [];
 
     productSnapshot.forEach((productDoc) => {
-
       const product = productDoc.data();
 
       if (
         product.ownerId &&
         approvedBusinesses[product.ownerId]
       ) {
-
         allProducts.push({
           id: productDoc.id,
           name: product.name || "Unnamed product",
@@ -526,23 +510,74 @@ businessSnapshot.forEach((businessDoc) => {
           businessName:
             approvedBusinesses[product.ownerId].businessName
         });
-
       }
-
     });
 
+    // Load salon settings
+    const salonSnapshot = await getDocs(
+      collection(db, "salonSettings")
+    );
+
+    const settingsByShopId = {};
+
+    salonSnapshot.forEach((settingsDoc) => {
+      settingsByShopId[settingsDoc.id] =
+        settingsDoc.data();
+    });
+
+    // Match salon settings with approved shops
+    allSalons = [];
+
+    Object.values(approvedBusinesses).forEach((business) => {
+      const category = String(
+        business.category || ""
+      ).toLowerCase();
+
+      const isSalon =
+        category.includes("salon") ||
+        category.includes("saloon") ||
+        category.includes("barber") ||
+        category.includes("hair");
+
+      if (!isSalon) return;
+
+      const settings = settingsByShopId[business.id];
+
+      if (!settings) return;
+
+      allSalons.push({
+        shopId: business.id,
+        ownerId: business.ownerId,
+        businessName: business.businessName,
+        category: business.category,
+        address: business.address,
+        chairs: Number(settings.chairs) || 1,
+        appointmentsEnabled:
+          settings.appointmentsEnabled === true,
+        appointmentDuration:
+          Number(settings.appointmentDuration) || 30,
+        services: Array.isArray(settings.services)
+          ? settings.services
+          : [],
+        slots: Array.isArray(settings.slots)
+          ? settings.slots
+          : []
+      });
+    });
+
+    console.log("Salon data loaded:", allSalons);
+
+    // Keep the existing product rendering
     renderProducts();
 
   } catch (error) {
-
     console.error("Marketplace loading failed:", error);
 
     showMarketplaceError(
-      "Could not load businesses and products. Please check Firestore permissions."
+      "Could not load businesses, products, or salons. Please check Firestore permissions."
     );
   }
 }
-
 function renderProducts() {
 
   const container = getElement("itemsContainer");
