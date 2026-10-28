@@ -422,6 +422,9 @@ let selectedCategory = "";
 let selectedBusiness = "";
 let selectedOwnerId = "";
 let allProducts = [];
+  // Salon data for the customer marketplace
+let allSalons = [];
+let salonSettingsByShop = {};
 
 signInAnonymously(auth)
   .then(() => {
