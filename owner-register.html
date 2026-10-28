@@ -219,6 +219,7 @@
 
         await addDoc(collection(db, "businessApplications"), {
           ownerId: credential.user.uid,
+          Ownerid: credential.user.uid,
           businessName,
           ownerName,
           email,
