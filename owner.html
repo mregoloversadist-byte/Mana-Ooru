@@ -67,6 +67,122 @@ button:disabled{opacity:.6}
 </div>
 
 <div id="newOrderAlert" class="notice hidden" role="alert"></div>
+ <!-- SALOON MANAGEMENT -->
+<section id="salonSection" class="card hidden">
+
+<h2>✂️ Saloon Management</h2>
+<p class="note">
+Manage chairs, services and customer appointments.
+</p>
+
+<div class="card">
+<h3>💺 Number of Chairs</h3>
+
+<label for="chairCount">Chairs</label>
+<input id="chairCount" type="number" min="1" max="100" value="1">
+</div>
+
+<div class="card">
+<h3>📅 Appointment Settings</h3>
+
+<label for="appointmentEnabled">
+Online Appointments
+</label>
+
+<select id="appointmentEnabled">
+<option value="true">Enabled</option>
+<option value="false">Disabled</option>
+</select>
+
+<label for="appointmentDuration">
+Appointment Duration
+</label>
+
+<select id="appointmentDuration">
+<option value="15">15 minutes</option>
+<option value="30" selected>30 minutes</option>
+<option value="45">45 minutes</option>
+<option value="60">60 minutes</option>
+<option value="90">90 minutes</option>
+</select>
+</div>
+
+<div class="card">
+<h3>✂️ Saloon Services</h3>
+
+<div id="salonServicesList">
+<p class="note">No services added yet.</p>
+</div>
+
+<label for="salonServiceName">
+Service Name
+</label>
+
+<input
+id="salonServiceName"
+placeholder="Men's Haircut"
+maxlength="80"
+>
+
+<label for="salonServicePrice">
+Price ₹
+</label>
+
+<input
+id="salonServicePrice"
+type="number"
+min="1"
+placeholder="100"
+>
+
+<button
+id="addSalonServiceButton"
+type="button">
+➕ Add Service
+</button>
+</div>
+
+<div class="card">
+<h3>⏰ Appointment Time Slots</h3>
+
+<div id="salonSlotsList">
+<p class="note">No time slots added yet.</p>
+</div>
+
+<label for="salonSlotStart">
+Start Time
+</label>
+
+<input id="salonSlotStart" type="time">
+
+<label for="salonSlotEnd">
+End Time
+</label>
+
+<input id="salonSlotEnd" type="time">
+
+<button
+id="addSalonSlotButton"
+type="button">
+➕ Add Time Slot
+</button>
+</div>
+
+<button
+id="saveSalonSettingsButton"
+class="green"
+type="button">
+💾 Save Saloon Settings
+</button>
+
+<p
+id="salonMessage"
+class="message"
+role="status">
+</p>
+
+</section>
+<!-- END SALOON MANAGEMENT -->
 <div id="statusAlert" class="notice hidden" role="status"></div>
 
 <section class="card">
