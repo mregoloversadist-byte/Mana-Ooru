@@ -244,8 +244,43 @@
           message.textContent =
             "Your account was created, but the application could not be saved. Please contact the administrator before trying again.";
         } else if (error.code === "auth/email-already-in-use") {
-          message.textContent =
-            "This email already has an account. Please use another email.";
+  try {
+    message.textContent =
+      "Account already exists. Please sign in with your existing password.";
+
+    const credential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    await addDoc(collection(db, "businessApplications"), {
+      ownerId: credential.user.uid,
+      Ownerid: credential.user.uid,
+      businessName,
+      ownerName,
+      email,
+      phone,
+      category,
+      address,
+      description,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    form.reset();
+
+    message.textContent =
+      "Application submitted successfully! Awaiting admin approval.";
+
+  } catch (loginError) {
+    console.error(loginError);
+
+    message.textContent =
+      "Could not submit application: " +
+      (loginError.code || loginError.message);
+  }
+        }
         } else if (error.code === "auth/weak-password") {
           message.textContent =
             "Please choose a stronger password.";
