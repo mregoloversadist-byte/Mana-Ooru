@@ -145,156 +145,137 @@
     <a class="back" href="index.html">← Back to Customer Website</a>
   </div>
 
-  <script type="module">
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-   import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // We will insert your existing Firebase configuration here.
-    const firebaseConfig = {
-  apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
-  authDomain: "mana-ooru-b7669.firebaseapp.com",
-  projectId: "mana-ooru-b7669",
-  storageBucket: "mana-ooru-b7669.firebasestorage.app",
-  messagingSenderId: "863965053518",
-  appId: "1:863965053518:web:48b09127d626c50e95f91f",
-  measurementId: "G-25VNJ206SH"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyBXnjMQyNJ6WRoS_T7JQ-KT0IKkBd_UEK0",
+    authDomain: "mana-ooru-b7669.firebaseapp.com",
+    projectId: "mana-ooru-b7669",
+    storageBucket: "mana-ooru-b7669.firebasestorage.app",
+    messagingSenderId: "863965053518",
+    appId: "1:863965053518:web:48b09127d626c50e95f91f",
+    measurementId: "G-25VNJ206SH"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    const form = document.getElementById("registrationForm");
-    const message = document.getElementById("message");
-    const button = document.getElementById("submitButton");
+  const form = document.getElementById("registrationForm");
+  const message = document.getElementById("message");
+  const button = document.getElementById("submitButton");
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-      button.disabled = true;
-      message.textContent = "Submitting registration...";
+    if (button.disabled) return;
 
-      let accountCreated = false;
+    button.disabled = true;
+    message.textContent = "Submitting registration...";
+
+    const businessName =
+      document.getElementById("businessName").value.trim();
+    const ownerName =
+      document.getElementById("ownerName").value.trim();
+    const email =
+      document.getElementById("email").value.trim();
+    const phone =
+      document.getElementById("phone").value.trim();
+    const password =
+      document.getElementById("password").value;
+    const category =
+      document.getElementById("category").value;
+    const address =
+      document.getElementById("address").value.trim();
+    const description =
+      document.getElementById("description").value.trim();
+
+    let accountCreated = false;
+
+    try {
+      if (
+        !businessName || !ownerName || !email ||
+        !phone || !category || !address
+      ) {
+        throw new Error("Please complete all required fields.");
+      }
+
+      let credential;
 
       try {
-        const businessName =
-          document.getElementById("businessName").value.trim();
-        const ownerName =
-          document.getElementById("ownerName").value.trim();
-        const email =
-          document.getElementById("email").value.trim();
-        const phone =
-          document.getElementById("phone").value.trim();
-        const password =
-          document.getElementById("password").value;
-        const category =
-          document.getElementById("category").value;
-        const address =
-          document.getElementById("address").value.trim();
-        const description =
-          document.getElementById("description").value.trim();
-
-        if (!businessName || !ownerName || !email ||
-            !phone || !category || !address) {
-          throw new Error("Please complete all required fields.");
-        }
-
-        const credential = await createUserWithEmailAndPassword(
+        credential = await createUserWithEmailAndPassword(
           auth, email, password
         );
-
         accountCreated = true;
-
-        await addDoc(collection(db, "businessApplications"), {
-          ownerId: credential.user.uid,
-          Ownerid: credential.user.uid,
-          businessName,
-          ownerName,
-          email,
-          phone,
-          category,
-          address,
-          description,
-          status: "pending",
-          createdAt: serverTimestamp()
-        });
-
-        form.reset();
+      } catch (error) {
+        if (error.code !== "auth/email-already-in-use") {
+          throw error;
+        }
 
         message.textContent =
-          "Registration submitted! Your business is awaiting admin approval.";
+          "Existing account found. Signing in...";
 
-      } catch (error) {
-        console.error(error);
-
-        if (accountCreated) {
-          message.textContent =
-            "Your account was created, but the application could not be saved. Please contact the administrator before trying again.";
-        } else if (error.code === "auth/email-already-in-use") {
-  try {
-    message.textContent =
-      "Account already exists. Please sign in with your existing password.";
-
-    const credential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    await addDoc(collection(db, "businessApplications"), {
-      ownerId: credential.user.uid,
-      Ownerid: credential.user.uid,
-      businessName,
-      ownerName,
-      email,
-      phone,
-      category,
-      address,
-      description,
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
-
-    form.reset();
-
-    message.textContent =
-      "Application submitted successfully! Awaiting admin approval.";
-
-  } catch (loginError) {
-    console.error(loginError);
-
-    message.textContent =
-      "Could not submit application: " +
-      (loginError.code || loginError.message);
-  }
-        }
-        } else if (error.code === "auth/weak-password") {
-          message.textContent =
-            "Please choose a stronger password.";
-        } else if (error.code === "auth/invalid-email") {
-          message.textContent =
-            "Please enter a valid email address.";
-        } else {
-  message.textContent =
-    "Registration failed: " + error.code + " - " + error.message;
-        }
-      } finally {
-        button.disabled = false;
+        credential = await signInWithEmailAndPassword(
+          auth, email, password
+        );
       }
-    });
-  </script>
+
+      message.textContent = "Saving your business application...";
+
+      await addDoc(collection(db, "businessApplications"), {
+        ownerId: credential.user.uid,
+        Ownerid: credential.user.uid,
+        businessName,
+        ownerName,
+        email,
+        phone,
+        category,
+        address,
+        description,
+        status: "pending",
+        createdAt: serverTimestamp()
+      });
+
+      message.textContent =
+        "Application submitted successfully! Awaiting admin approval.";
+
+      form.reset();
+
+    } catch (error) {
+      console.error("Mana-Ooru registration error:", error);
+
+      if (
+        accountCreated &&
+        error.code !== "auth/network-request-failed"
+      ) {
+        message.textContent =
+          "Account created, but the application could not be saved. " +
+          "Please contact the administrator before retrying.";
+      } else {
+        message.textContent =
+          "Registration failed: " +
+          (error.code || "error") + " - " +
+          (error.message || "Please try again.");
+      }
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>
