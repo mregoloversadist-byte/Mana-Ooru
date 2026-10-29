@@ -740,18 +740,25 @@ $("confirmSalonBooking").addEventListener("click", async () => {
     message.appendChild(reference);
 
     button.textContent = "Appointment Submitted";
+} catch (error) {
+console.error("Salon appointment failed:", {
+code: error.code,
+message: error.message,
+shopId: salon?.shopId,
+ownerId: salon?.ownerId,
+customerId: auth.currentUser?.uid
+});
 
-  } catch (error) {
-    console.error("Salon appointment failed:", error);
+message.textContent =
+  "Booking failed: " +
+  (error.code || "unknown-error") +
+  " — " +
+  (error.message || "Please try again.");
 
-    message.textContent =
-      error.code === "permission-denied"
-        ? "Booking permission denied. We need to check the Firestore rules and salon approval."
-        : "Could not submit the appointment. Please try again.";
-  } finally {
-    salonBookingSubmitting = false;
-    button.disabled = false;
-  }
+} finally {
+salonBookingSubmitting = false;
+button.disabled = false;
+}
 });
 function openOrder(p){
  selectedItem=p.name;
