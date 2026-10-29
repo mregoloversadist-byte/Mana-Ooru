@@ -362,7 +362,8 @@ async function loadMarketplace(){
      category:shops[ownerId].category,
      chairs:Number(x.chairCount||x.chairs||0),
      appointmentsEnabled:x.appointmentsEnabled===true,
-     services:Array.isArray(x.services)?x.services:[]
+     services:Array.isArray(x.services)?x.services:[],
+slots:Array.isArray(x.slots)?x.slots:[]
     });
    });
   }catch(e){
