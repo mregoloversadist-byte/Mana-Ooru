@@ -608,6 +608,151 @@ $("cancelSalonBooking").addEventListener("click", () => {
 $("salonBookingBox").style.display = "none";
 selectedSalonForBooking = null;
 });
+ /* SALON APPOINTMENT CONFIRMATION */
+
+let salonBookingSubmitting = false;
+
+$("confirmSalonBooking").addEventListener("click", async () => {
+  if (salonBookingSubmitting) return;
+
+  const button = $("confirmSalonBooking");
+  const message = $("salonBookingMessage");
+  const salon = selectedSalonForBooking;
+
+  if (!salon) {
+    message.textContent = "Please select a salon again.";
+    return;
+  }
+
+  if (salon.appointmentsEnabled !== true) {
+    message.textContent = "Appointments are currently disabled by this salon.";
+    return;
+  }
+
+  if (!salon.shopId || !salon.ownerId) {
+    message.textContent = "Salon details are incomplete. Please contact the business.";
+    return;
+  }
+
+  const serviceIndex = $("salonServiceSelect").value;
+  const date = $("salonBookingDate").value;
+  const timeSlot = $("salonBookingSlot").value;
+  const customerName = $("salonCustomerName").value.trim();
+  const customerPhone = $("salonCustomerPhone").value.trim();
+  const customerLocation = $("salonCustomerLocation").value.trim();
+
+  if (
+    serviceIndex === "" ||
+    !date ||
+    !timeSlot ||
+    !customerName ||
+    !customerPhone
+  ) {
+    message.textContent = "Please complete all required fields.";
+    return;
+  }
+
+  const today = new Date();
+  const localToday = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0")
+  ].join("-");
+
+  if (date < localToday) {
+    message.textContent = "Please select today or a future date.";
+    return;
+  }
+
+  if (!/^[0-9+\-()\s]{7,15}$/.test(customerPhone)) {
+    message.textContent = "Please enter a valid mobile number.";
+    return;
+  }
+
+  const service = salon.services[Number(serviceIndex)];
+
+  if (!service) {
+    message.textContent = "Please select a valid service.";
+    return;
+  }
+
+  const serviceName = typeof service === "string"
+    ? service
+    : service.name || service.serviceName || "Service";
+
+  const servicePrice = typeof service === "object"
+    ? Number(service.price)
+    : 0;
+
+  if (!Number.isFinite(servicePrice) || servicePrice < 0) {
+    message.textContent = "Invalid service price. Please contact the salon.";
+    return;
+  }
+
+  const slotParts = timeSlot.split("|");
+
+  if (
+    slotParts.length !== 2 ||
+    !(salon.slots || []).some(slot =>
+      slot.start === slotParts[0] &&
+      slot.end === slotParts[1]
+    )
+  ) {
+    message.textContent = "Invalid time slot. Please select another slot.";
+    return;
+  }
+
+  try {
+    salonBookingSubmitting = true;
+    button.disabled = true;
+    message.textContent = "Submitting your appointment...";
+
+    if (!auth.currentUser) {
+      await signInAnonymously(auth);
+    }
+
+    const customerId = auth.currentUser.uid;
+
+    const appointmentRef = await addDoc(
+      collection(db, "appointments"),
+      {
+        shopId: salon.shopId,
+        ownerId: salon.ownerId,
+        customerId: customerId,
+        businessName: salon.businessName,
+        serviceName: serviceName,
+        servicePrice: servicePrice,
+        date: date,
+        timeSlot: timeSlot,
+        customerName: customerName,
+        customerPhone: customerPhone,
+        customerLocation: customerLocation,
+        status: "pending",
+        createdAt: serverTimestamp()
+      }
+    );
+
+    message.textContent =
+      "Appointment request submitted successfully!";
+
+    const reference = document.createElement("p");
+    reference.textContent = "Booking reference: " + appointmentRef.id;
+    message.appendChild(reference);
+
+    button.textContent = "Appointment Submitted";
+
+  } catch (error) {
+    console.error("Salon appointment failed:", error);
+
+    message.textContent =
+      error.code === "permission-denied"
+        ? "Booking permission denied. We need to check the Firestore rules and salon approval."
+        : "Could not submit the appointment. Please try again.";
+  } finally {
+    salonBookingSubmitting = false;
+    button.disabled = false;
+  }
+});
 function openOrder(p){
  selectedItem=p.name;
  selectedPrice=p.price;
