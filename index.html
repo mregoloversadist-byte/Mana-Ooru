@@ -434,6 +434,25 @@ function renderProducts(){
 
   card.append(name,category);
 
+card.style.cursor="pointer";
+card.setAttribute("role","button");
+card.setAttribute("tabindex","0");
+card.setAttribute(
+ "aria-label",
+ "Book an appointment at "+s.businessName
+);
+
+card.addEventListener("click",()=>{
+ openSalonBooking(s);
+});
+
+card.addEventListener("keydown",e=>{
+ if(e.key==="Enter"||e.key===" "){
+  e.preventDefault();
+  openSalonBooking(s);
+ }
+});
+
   if(s.chairs>0){
    const chairs=document.createElement("p");
    chairs.textContent="Available chairs: "+s.chairs;
