@@ -521,7 +521,93 @@ card.addEventListener("keydown",e=>{
   container.appendChild(card);
  });
 }
+let selectedSalonForBooking = null;
 
+function openSalonBooking(s) {
+selectedSalonForBooking = s;
+
+$("salonBookingBusiness").value = s.businessName;
+
+const serviceSelect = $("salonServiceSelect");
+serviceSelect.replaceChildren(new Option("Choose a service", ""));
+
+(s.services || []).forEach((service, index) => {
+const name = typeof service === "string"
+? service
+: service.name || service.serviceName || "Service";
+
+const price = typeof service === "object"
+  ? Number(service.price || 0)
+  : 0;
+
+const option = new Option(
+  name + " — ₹" + price,
+  String(index)
+);
+
+serviceSelect.appendChild(option);
+
+});
+
+$("salonBookingPrice").textContent = "0";
+
+const slotSelect = $("salonBookingSlot");
+slotSelect.replaceChildren(new Option("Choose a time slot", ""));
+
+(s.slots || []).forEach(slot => {
+if (!slot.start || !slot.end) return;
+
+slotSelect.appendChild(
+  new Option(slot.start + " - " + slot.end,
+             slot.start + "|" + slot.end)
+);
+
+});
+
+const dateInput = $("salonBookingDate");
+const today = new Date();
+const localToday = [
+today.getFullYear(),
+String(today.getMonth() + 1).padStart(2, "0"),
+String(today.getDate()).padStart(2, "0")
+].join("-");
+
+dateInput.min = localToday;
+dateInput.value = "";
+
+$("salonBookingMessage").textContent = "";
+
+$("orderBox").style.display = "none";
+$("successBox").style.display = "none";
+$("salonBookingBox").style.display = "block";
+
+$("salonBookingBox").scrollIntoView({
+behavior: "smooth",
+block: "start"
+});
+}
+
+$("salonServiceSelect").addEventListener("change", () => {
+const salon = selectedSalonForBooking;
+const index = $("salonServiceSelect").value;
+
+if (!salon || index === "") {
+$("salonBookingPrice").textContent = "0";
+return;
+}
+
+const service = salon.services[Number(index)];
+const price = typeof service === "object"
+? Number(service.price || 0)
+: 0;
+
+$("salonBookingPrice").textContent = String(price);
+});
+
+$("cancelSalonBooking").addEventListener("click", () => {
+$("salonBookingBox").style.display = "none";
+selectedSalonForBooking = null;
+});
 function openOrder(p){
  selectedItem=p.name;
  selectedPrice=p.price;
