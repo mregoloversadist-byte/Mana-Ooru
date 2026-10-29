@@ -147,10 +147,15 @@ function errorMessage(t){
 $("itemsContainer").innerHTML='<div class="empty">'+t+"</div>";
 }
 
-signInAnonymously(auth).then(loadMarketplace).catch(e=>{
-console.error(e);
-errorMessage("Sign-in failed. Please refresh the page.");
-});
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Anonymous sign-in successful");
+    return loadMarketplace();
+  })
+  .catch(e => {
+    console.error("Firebase sign-in failed:", e.code, e.message);
+    errorMessage("Sign-in failed: " + e.code);
+  });
 
 async function loadMarketplace(){
 try{
