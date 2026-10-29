@@ -607,7 +607,134 @@ function startOrdersListener(){
   $("ordersList").textContent="Could not load orders: "+error.message;
  });
 }
+// ===== SALON APPOINTMENTS =====
 
+function startAppointmentsListener() {
+if (!currentOwnerId) return;
+
+if (stopAppointmentsListener) {
+stopAppointmentsListener();
+}
+
+let panel = document.getElementById("salonAppointmentsSection");
+
+if (!panel) {
+panel = document.createElement("section");
+panel.id = "salonAppointmentsSection";
+panel.style.cssText =
+"background:white;padding:16px;margin:16px 0;border-radius:12px;box-shadow:0 2px 8px #0002";
+
+panel.innerHTML = `
+  <h2>💈 Salon Appointments</h2>
+  <div id="appointmentsList">Loading appointments...</div>
+`;
+
+const orders = document.getElementById("ordersList");
+
+if (orders && orders.parentElement) {
+  orders.parentElement.insertAdjacentElement("afterend", panel);
+} else {
+  document.body.appendChild(panel);
+}
+
+}
+
+const list = document.getElementById("appointmentsList");
+
+const appointmentsQuery = query(
+collection(db, "appointments"),
+where("ownerId", "==", currentOwnerId)
+);
+
+stopAppointmentsListener = onSnapshot(
+appointmentsQuery,
+snapshot => {
+if (snapshot.empty) {
+list.textContent = "No salon appointments yet.";
+return;
+}
+
+  list.innerHTML = "";
+
+  snapshot.forEach(appointmentDoc => {
+    const a = appointmentDoc.data();
+    const id = appointmentDoc.id;
+    const status = String(a.status || "pending").toLowerCase();
+
+    const card = document.createElement("div");
+    card.style.cssText =
+      "border:1px solid #ddd;border-radius:10px;padding:12px;margin:12px 0";
+
+    const customer = escapeHtml(a.customerName || "Customer");
+    const phone = escapeHtml(a.customerPhone || "Not provided");
+    const service = escapeHtml(
+      a.serviceName || a.service || a.item || "Salon service"
+    );
+    const date = escapeHtml(
+      a.appointmentDate || a.date || "Not specified"
+    );
+    const time = escapeHtml(
+      a.timeSlot || a.slot || a.appointmentTime || "Not specified"
+    );
+
+    card.innerHTML = `
+      <h3>${customer}</h3>
+      <p><b>Service:</b> ${service}</p>
+      <p><b>Phone:</b> ${phone}</p>
+      <p><b>Date:</b> ${date}</p>
+      <p><b>Time:</b> ${time}</p>
+      <p><b>Amount:</b> ₹${Number(a.servicePrice ?? a.price ?? 0)}</p>
+      <p><b>Status:</b> ${escapeHtml(status.toUpperCase())}</p>
+      ${
+        status === "pending"
+          ? `
+            <button data-appointment-action="accepted"
+              data-id="${escapeHtml(id)}">✅ Accept</button>
+            <button data-appointment-action="rejected"
+              data-id="${escapeHtml(id)}">❌ Reject</button>
+          `
+          : ""
+      }
+    `;
+
+    list.appendChild(card);
+  });
+},
+error => {
+  console.error("Appointment loading error:", error);
+  list.textContent = "Could not load appointments: " + error.message;
+}
+
+);
+
+list.onclick = async event => {
+const button = event.target.closest("[data-appointment-action]");
+if (!button) return;
+
+const id = button.dataset.id;
+const newStatus = button.dataset.appointmentAction;
+
+if (!id || !["accepted", "rejected"].includes(newStatus)) return;
+
+button.disabled = true;
+
+try {
+  await setDoc(
+    doc(db, "appointments", id),
+    {
+      status: newStatus,
+      updatedAt: serverTimestamp()
+    },
+    { merge: true }
+  );
+} catch (error) {
+  console.error(error);
+  alert("Could not update appointment: " + error.message);
+  button.disabled = false;
+}
+
+};
+     }
 function renderOrders(snapshot){
  if(snapshot.empty){
   $("ordersList").textContent="No orders have been received yet.";
