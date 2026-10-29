@@ -569,6 +569,7 @@ function startOrdersListener(){
   if(firstOrderSnapshot){
    firstOrderSnapshot=false;
    snapshot.docs.forEach(d=>previousStatuses.set(d.id,normalizedStatus(d.data().status)));
+   startAppointmentsListener();
    renderOrders(snapshot);
    return;
   }
