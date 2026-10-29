@@ -97,7 +97,37 @@ placeholder="Enter your address or location"></textarea>
 <button id="confirmButton" type="button">✅ Confirm Order</button>
 <button id="cancelButton" class="cancel" type="button">Cancel</button>
 </section>
+<section id="salonBookingBox" class="booking" style="display:none">
+  <h2>✂️ Book a Salon Appointment</h2><label for="salonBookingBusiness">Salon</label>
+<input id="salonBookingBusiness" readonly>
 
+<label for="salonServiceSelect">Select Service</label>
+<select id="salonServiceSelect" required>
+<option value="">Choose a service</option>
+</select>
+
+  <p>Total: ₹<span id="salonBookingPrice">0</span></p><label for="salonBookingDate">Appointment Date</label>
+<input id="salonBookingDate" type="date" required>
+
+<label for="salonBookingSlot">Available Time Slot</label>
+<select id="salonBookingSlot" required>
+<option value="">Choose a time slot</option>
+</select>
+
+<label for="salonCustomerName">Your Name</label>
+<input id="salonCustomerName" maxlength="100" required>
+
+<label for="salonCustomerPhone">Mobile Number</label>
+<input id="salonCustomerPhone" type="tel" maxlength="15" required>
+
+<label for="salonCustomerLocation">Location (optional)</label>
+
+  <textarea id="salonCustomerLocation" rows="2" maxlength="500"></textarea>  <button id="confirmSalonBooking" type="button">
+    Confirm Appointment
+  </button>  <button id="cancelSalonBooking" class="cancel" type="button">
+    Cancel
+  </button>  <p id="salonBookingMessage" role="status"></p>
+</section>
 <section id="successBox" class="success">
 <h2>✅ Order Submitted!</h2>
 <p>Your order was saved successfully.</p>
